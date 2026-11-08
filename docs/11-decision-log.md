@@ -17,10 +17,12 @@ Format: **ID — Decision** · Status · Context → Consequence. Status is one 
 | ADR-011 | Licence policy as one pure module; `UNKNOWN` → link only | Proposed | Copyright safety by default. |
 | ADR-012 | Gutenberg through the offline RDF catalog, never by crawling the site | Proposed | Required by Project Gutenberg's robot policy. |
 | ADR-013 | Deterministic generator by default; generator interface allows an optional local LLM | Proposed (Q1) | AI is optional, as the brief requires. Quality limits are documented in doc 04. |
-| ADR-014 | Separate worker process; node-cron only enqueues; Mongo `jobs` collection with leases | Proposed | No duplicate cron runs and no Redis. |
+| ADR-014 | ~~Separate worker process; node-cron only enqueues; Mongo `jobs` collection with leases~~ | Superseded by ADR-021 | Vercel can't run a long-lived worker. |
 | ADR-015 | SM-2 scheduler behind a `ReviewScheduler` interface | Proposed | Adapts to recall, unlike a fixed ladder. FSRS remains possible later. |
 | ADR-016 | MongoDB text indexes for search in the MVP | Proposed | Zero infrastructure. Meilisearch is the upgrade path. |
 | ADR-017 | Public user-authored content licensed CC BY-SA 4.0 | Proposed (Q2) | Compatible with Wikipedia excerpts, and enables forks and community edits. |
 | ADR-018 | No user file uploads in the MVP; images come only from Commons | Proposed | Avoids storage cost and copyright exposure. |
 | ADR-019 | Accessible role tokens layered over the brand palette | Proposed (Q7) | The brief's own palette fails WCAG AA in three places. |
 | ADR-020 | Outbound fetches are restricted to an allow-list of provider hosts | Proposed | SSRF prevention. |
+| ADR-021 | Host on Vercel (Hobby, free): the web app is a static build; the API will run as Vercel serverless functions. Scheduled jobs run as GitHub Actions cron workflows that call the API or scripts | Accepted | Zero cost and no servers to run. Cron moves out of the app process, so ADR-014's duplicate-run concern disappears. |
+| ADR-022 | Commits are authored as the repository owner, with Claude credited in a `Co-Authored-By` trailer | Accepted | Vercel Hobby blocks deployments of commits whose author is not the account owner. |

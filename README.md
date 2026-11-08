@@ -26,3 +26,9 @@ npm run build
 ```
 
 Requires Node 22+.
+
+## Deploy
+
+The app deploys on Vercel from `main` using [`vercel.json`](vercel.json). Every merge to `main` updates the live site, and every pull request gets its own preview URL.
+
+Vercel's free Hobby plan only deploys commits authored by the account owner, so commits in this repo are authored as the owner (see ADR-022).

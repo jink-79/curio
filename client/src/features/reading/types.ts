@@ -86,10 +86,23 @@ export interface PathOutline {
   stages: { number: number; title: string; lessons: PathLesson[] }[];
 }
 
-/** A user's highlight on one block, anchored by quoted text (W3C TextQuoteSelector style). */
+export type HighlightColor = "blue" | "yellow" | "green" | "pink";
+
+/**
+ * A user's highlight on one block, anchored by quoted text in the style of the
+ * W3C TextQuoteSelector: the exact words plus a little context either side,
+ * so repeated phrases resolve to the right occurrence and edits to the lesson
+ * can be detected.
+ */
 export interface Highlight {
   id: string;
+  lessonKey: string;
   blockId: string;
   exact: string;
+  prefix?: string;
+  suffix?: string;
+  color: HighlightColor;
   note?: string;
+  createdAt: number;
+  updatedAt?: number;
 }

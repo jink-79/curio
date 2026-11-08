@@ -28,8 +28,8 @@ const items = buildLibrary({
   paths: [path],
   lessons: { a: lessonA },
   highlights: [
-    { id: "h1", blockId: "blk", exact: "war guilt clause", note: "Compare with 1945" },
-    { id: "h2", blockId: "elsewhere", exact: "not in any lesson" },
+    { id: "h1", lessonKey: "a", blockId: "blk", exact: "war guilt clause", note: "Compare with 1945", color: "blue", createdAt: 50 },
+    { id: "h2", lessonKey: "a", blockId: "elsewhere", exact: "not in any lesson", color: "blue", createdAt: 60 },
   ],
   progressOf: (k) => progress[k] ?? empty,
 });

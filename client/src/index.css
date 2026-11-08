@@ -56,6 +56,18 @@
   --color-r-on-primary: var(--r-on-primary);
 }
 
+/* Highlight colours: translucent fills behind text, solid for swatches. Same in every theme. */
+:root {
+  --hl-blue: rgb(76 127 245 / 0.32);
+  --hl-yellow: rgb(245 190 30 / 0.38);
+  --hl-green: rgb(34 197 94 / 0.3);
+  --hl-pink: rgb(236 72 153 / 0.28);
+  --hl-solid-blue: #6b95f7;
+  --hl-solid-yellow: #f5c518;
+  --hl-solid-green: #4ade80;
+  --hl-solid-pink: #f472b6;
+}
+
 /* Type pairings: a reading serif plus a companion sans. */
 :root,
 [data-reader-pairing="tidepool"] {

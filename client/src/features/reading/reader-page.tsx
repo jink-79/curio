@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { type CSSProperties, useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/cn";
 import { usePathProgress } from "@/features/paths/hooks/use-path-progress";
@@ -11,13 +11,18 @@ import { ReaderBottomBar } from "./components/reader-bottom-bar";
 import { ReaderTopBar } from "./components/reader-top-bar";
 import { SettingsSheet } from "./components/settings-sheet";
 import { LessonUnavailable } from "./components/lesson-unavailable";
-import { SAMPLE_HIGHLIGHTS, SAMPLE_LESSONS, SAMPLE_PATHS } from "./data/sample";
+import { NoteSheet } from "./components/note-sheet";
+import { SelectionBar } from "./components/selection-bar";
+import { SAMPLE_LESSONS, SAMPLE_PATHS } from "./data/sample";
+import { useHighlights } from "./hooks/use-highlights";
+import { addHighlight, removeHighlight, updateHighlight } from "./lib/highlight-store";
+import { clearSelection, type PendingSelection, readSelection } from "./lib/selection";
 import { useLessonProgress } from "./hooks/use-lesson-progress";
 import { useReaderSettings } from "./reader-settings";
 import { scrollProgress } from "./lib/progress";
 import { orphanedHighlights } from "./lib/segments";
 import { FONT_SIZES, LINE_HEIGHTS } from "./lib/settings";
-import type { LessonView, PathOutline } from "./types";
+import type { HighlightColor, LessonView, PathOutline } from "./types";
 
 type Sheet = "settings" | "contents" | "notes" | null;
 
@@ -34,7 +39,77 @@ export function ReaderPage() {
 }
 
 function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
-  const highlights = SAMPLE_HIGHLIGHTS.filter((h) => lesson.blocks.some((b) => b.id === h.blockId));
+  const allHighlights = useHighlights();
+  const highlights = useMemo(() => allHighlights.filter((h) => h.lessonKey === lesson.lessonKey), [allHighlights, lesson.lessonKey]);
+  const articleRef = useRef<HTMLElement>(null);
+  const [pending, setPending] = useState<PendingSelection | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [lastColor, setLastColor] = useState<HighlightColor>("blue");
+  const [toast, setToast] = useState("");
+
+  // Watch the text selection inside the lesson (one read per frame). On iOS, touching a toolbar
+  // button can clear the selection just before the tap lands, so the last usable selection is
+  // kept in a ref and the bar lingers briefly after the selection disappears.
+  const readyRef = useRef<PendingSelection | null>(null);
+  useEffect(() => {
+    let frame = 0;
+    let hideTimer = 0;
+    const onChange = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        if (!articleRef.current) return;
+        const next = readSelection(articleRef.current, highlights);
+        window.clearTimeout(hideTimer);
+        if (next) {
+          if (next.status === "ready") readyRef.current = next;
+          setPending(next);
+        } else {
+          hideTimer = window.setTimeout(() => {
+            readyRef.current = null;
+            setPending(null);
+          }, 450);
+        }
+      });
+    };
+    document.addEventListener("selectionchange", onChange);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.clearTimeout(hideTimer);
+      document.removeEventListener("selectionchange", onChange);
+    };
+  }, [highlights]);
+  const done = () => {
+    clearSelection();
+    readyRef.current = null;
+    setPending(null);
+  };
+
+  const flash = (message: string) => {
+    setToast(message);
+    window.setTimeout(() => setToast(""), 1800);
+  };
+  const highlightSelection = (color: HighlightColor, thenEditNote: boolean) => {
+    const sel = readyRef.current;
+    if (sel?.status !== "ready") return;
+    const { blockId, quote } = sel;
+    const h = addHighlight({ lessonKey: lesson.lessonKey, blockId, exact: quote.exact, color, ...(quote.prefix ? { prefix: quote.prefix } : {}), ...(quote.suffix ? { suffix: quote.suffix } : {}) });
+    setLastColor(color);
+    done();
+    if (thenEditNote) setEditingId(h.id);
+    else flash("Highlighted");
+  };
+  const copySelection = async () => {
+    const sel = readyRef.current;
+    if (sel?.status !== "ready") return;
+    const text = `“${sel.quote.exact}” — ${lesson.title}, ${path.title} (CURIO)`;
+    try {
+      await navigator.clipboard.writeText(text);
+      flash("Copied with citation");
+    } catch {
+      flash("Couldn’t copy");
+    }
+    done();
+  };
 
   const [settings, setSettings] = useReaderSettings();
   const { progress, toggleBookmark, toggleComplete, reportScroll } = useLessonProgress(lesson.lessonKey, lesson.estimatedMinutes);
@@ -97,7 +172,7 @@ function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
           reportScroll(pct);
         }}
       >
-        <article className="mx-auto max-w-[68ch] px-5.5 pt-5.5 pb-10 font-reading">
+        <article ref={articleRef} className="mx-auto max-w-[68ch] px-5.5 pt-5.5 pb-10 font-reading">
           <LessonHeader lesson={lesson} sourceCount={sourceCount} />
           {lesson.blocks.map((block) => (
             <div
@@ -110,6 +185,7 @@ function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
                 highlights={highlights}
                 openHighlightId={openHighlightId}
                 onToggleHighlight={(id) => setOpenHighlightId((cur) => (cur === id ? null : id))}
+                onEditHighlight={setEditingId}
                 textStyle={textStyle}
               />
             </div>
@@ -138,6 +214,20 @@ function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
         onOpenContents={() => setSheet("contents")}
         onOpenNotes={() => setSheet("notes")}
         onToggleComplete={toggleComplete}
+        overlay={
+          pending ? (
+            <SelectionBar
+              selection={pending}
+              onHighlight={(c) => highlightSelection(c, false)}
+              onNote={() => highlightSelection(lastColor, true)}
+              onCopy={copySelection}
+            />
+          ) : toast ? (
+            <div role="status" className="mx-auto w-fit rounded-full bg-r-text px-4 py-2 text-[13px] font-medium text-r-bg shadow-lg">
+              {toast}
+            </div>
+          ) : null
+        }
       />
 
       <SettingsSheet {...sheetProps("settings")} settings={settings} onChange={setSettings} />
@@ -148,7 +238,27 @@ function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
         currentCompleted={progress.completed}
         statuses={pathProgress.statuses}
       />
-      <NotesSheet {...sheetProps("notes")} highlights={highlights} orphaned={orphaned} />
+      <NotesSheet
+        {...sheetProps("notes")}
+        highlights={highlights}
+        orphaned={orphaned}
+        onSelect={(h) => {
+          setSheet(null);
+          setEditingId(h.id);
+        }}
+      />
+      <NoteSheet
+        highlight={highlights.find((h) => h.id === editingId) ?? null}
+        onClose={() => setEditingId(null)}
+        onSave={(id, patch) => {
+          updateHighlight(id, patch);
+          setOpenHighlightId(id);
+        }}
+        onDelete={(id) => {
+          removeHighlight(id);
+          flash("Highlight deleted");
+        }}
+      />
     </div>
   );
 }

@@ -10,14 +10,17 @@ interface BlockRendererProps {
   highlights: Highlight[];
   openHighlightId: string | null;
   onToggleHighlight: (id: string) => void;
+  onEditHighlight: (id: string) => void;
   textStyle: CSSProperties;
 }
 
-export function BlockRenderer({ block, highlights, openHighlightId, onToggleHighlight, textStyle }: BlockRendererProps) {
+export function BlockRenderer({ block, highlights, openHighlightId, onToggleHighlight, onEditHighlight, textStyle }: BlockRendererProps) {
   switch (block.type) {
     case "authored":
       return (
         <AuthoredBlock
+          blockId={block.id}
+          onEditHighlight={onEditHighlight}
           {...(block.heading ? { heading: block.heading } : {})}
           markdown={block.markdown}
           highlights={highlights.filter((h) => h.blockId === block.id)}

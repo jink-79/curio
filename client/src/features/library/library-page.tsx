@@ -2,7 +2,8 @@ import { Search, X } from "lucide-react";
 import { useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { listPaths } from "@/features/discover/lib/catalog";
-import { SAMPLE_HIGHLIGHTS, SAMPLE_LESSONS } from "@/features/reading/data/sample";
+import { SAMPLE_LESSONS } from "@/features/reading/data/sample";
+import { useHighlights } from "@/features/reading/hooks/use-highlights";
 import { readLessonProgress } from "@/features/reading/hooks/use-lesson-progress";
 import { cn } from "@/lib/cn";
 import { LibraryItemCard } from "./components/library-item-card";
@@ -31,7 +32,8 @@ export function LibraryPage() {
     setParams({ ...(t !== "all" ? { tab: t } : {}), ...(q ? { q } : {}) }, { replace: true });
   };
 
-  const items = buildLibrary({ paths: listPaths(), lessons: SAMPLE_LESSONS, highlights: SAMPLE_HIGHLIGHTS, progressOf: readLessonProgress });
+  const highlights = useHighlights();
+  const items = buildLibrary({ paths: listPaths(), lessons: SAMPLE_LESSONS, highlights, progressOf: readLessonProgress });
   const counts = countByTab(items);
   const shown = filterLibrary(items, tab, query);
   const searching = query.trim().length > 0;

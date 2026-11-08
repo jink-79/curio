@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { readJson, writeJson } from "@/lib/storage";
 import { shouldAutoComplete } from "../lib/progress";
 
-interface LessonProgress {
+export interface LessonProgress {
   bookmarked: boolean;
   completed: boolean;
   /** Set once the user un-marks a lesson, so auto-complete never fights them. */
@@ -25,13 +25,20 @@ function isProgress(v: unknown): v is LessonProgress {
   );
 }
 
+export const progressKey = (lessonKey: string) => `curio.progress.v1.${lessonKey}`;
+
+/** One lesson's stored progress, for screens that list many lessons. */
+export function readLessonProgress(lessonKey: string): LessonProgress {
+  return readJson(progressKey(lessonKey), isProgress) ?? EMPTY;
+}
+
 /**
  * Per-lesson progress for the signed-in user. Stored on the device for now;
  * the same shape becomes `lessonProgress` + `bookmarks` on the API.
  * Active time only counts while the tab is visible.
  */
 export function useLessonProgress(lessonKey: string, estimatedMinutes: number) {
-  const key = `curio.progress.v1.${lessonKey}`;
+  const key = progressKey(lessonKey);
   const [progress, setProgress] = useState<LessonProgress>(() => readJson(key, isProgress) ?? EMPTY);
   const latest = useRef(progress);
 

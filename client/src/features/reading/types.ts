@@ -58,14 +58,24 @@ export interface LessonView {
   next?: { title: string; minutes: number };
 }
 
+export interface PathLesson {
+  lessonKey: string;
+  title: string;
+  minutes: number;
+  /** One-line hint shown under the title in the curriculum. */
+  summary: string;
+  /** Sample data only: treat as already completed (lesson 1 has no written content). */
+  seedCompleted?: boolean;
+}
+
 export interface PathOutline {
   pathId: string;
   title: string;
-  stages: {
-    number: number;
-    title: string;
-    lessons: { lessonKey: string; title: string; minutes: number; status: "done" | "current" | "todo" }[];
-  }[];
+  description: string;
+  category: string;
+  difficulty: string;
+  objectives: string[];
+  stages: { number: number; title: string; lessons: PathLesson[] }[];
 }
 
 /** A user's highlight on one block, anchored by quoted text (W3C TextQuoteSelector style). */

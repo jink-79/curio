@@ -4,11 +4,13 @@ import type { Highlight } from "../../types";
 import { SectionHeading } from "../section-heading";
 
 interface AuthoredBlockProps {
+  blockId: string;
   heading?: string;
   markdown: string;
   highlights: Highlight[];
   openHighlightId: string | null;
   onToggleHighlight: (id: string) => void;
+  onEditHighlight: (id: string) => void;
   textStyle: CSSProperties;
 }
 
@@ -29,19 +31,23 @@ function Run({ s }: { s: Segment }) {
   return <>{s.text}</>;
 }
 
-export function AuthoredBlock({ heading, markdown, highlights, openHighlightId, onToggleHighlight, textStyle }: AuthoredBlockProps) {
+export function AuthoredBlock(props: AuthoredBlockProps) {
+  const { blockId, heading, markdown, highlights, openHighlightId, onToggleHighlight, onEditHighlight, textStyle } = props;
   return (
     <section>
       {heading && <SectionHeading>{heading}</SectionHeading>}
       {splitParagraphs(markdown).map((paragraph, pi) => {
         const groups = group(applyHighlights(parseInline(paragraph), highlights));
         const openHere = groups.find((g) => g.highlightId !== undefined && g.highlightId === openHighlightId);
-        const openNote = openHere ? highlights.find((h) => h.id === openHere.highlightId)?.note : undefined;
+        const open = openHere ? highlights.find((h) => h.id === openHere.highlightId) : undefined;
         return (
           <Fragment key={pi}>
-            <p className="mb-4" style={textStyle}>
-              {groups.map((g, gi) =>
-                g.highlightId ? (
+            {/* data-para: the selection logic maps a text selection to this paragraph's plain text. */}
+            <p className="mb-4" style={textStyle} data-para="" data-block-id={blockId}>
+              {groups.map((g, gi) => {
+                if (!g.highlightId) return g.parts.map((s, si) => <Run key={`${gi}-${si}`} s={s} />);
+                const h = highlights.find((x) => x.id === g.highlightId);
+                return (
                   // A <button> is always laid out as an inline-block box and would break the
                   // paragraph, so the tappable highlight is an inline link acting as a button.
                   <a
@@ -59,24 +65,34 @@ export function AuthoredBlock({ heading, markdown, highlights, openHighlightId, 
                         onToggleHighlight(g.highlightId as string);
                       }
                     }}
-                    className="rounded-[3px] bg-r-highlight px-0.5 no-underline [box-decoration-break:clone] [-webkit-box-decoration-break:clone]"
+                    className="rounded-[3px] px-0.5 no-underline [box-decoration-break:clone] [-webkit-box-decoration-break:clone]"
+                    style={{ background: `var(--hl-${h?.color ?? "blue"})` }}
                   >
                     {g.parts.map((s, si) => (
                       <Run key={si} s={s} />
                     ))}
                   </a>
-                ) : (
-                  g.parts.map((s, si) => <Run key={`${gi}-${si}`} s={s} />)
-                ),
-              )}
+                );
+              })}
             </p>
-            {openHere && (
-              <div id={`note-${openHere.highlightId}`} className="-mt-1 mb-4 rounded-xl border border-r-border bg-r-card px-3.5 py-3">
+            {open && (
+              <div id={`note-${open.id}`} className="-mt-1 mb-4 rounded-xl border border-r-border bg-r-card px-3.5 py-3 font-reading">
                 <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.12em] text-r-muted uppercase">
-                  <span aria-hidden className="size-2 rounded-[2px] bg-r-primary" />
-                  {openNote ? "Your note" : "Highlight"}
+                  <span aria-hidden className="size-2.5 rounded-[3px]" style={{ background: `var(--hl-solid-${open.color})` }} />
+                  {open.note ? "Your note" : "Highlight"}
                 </div>
-                <p className="mt-1.5 text-sm leading-normal">{openNote ?? "No note yet."}</p>
+                {open.note ? (
+                  <p className="mt-1.5 text-sm leading-normal whitespace-pre-line">{open.note}</p>
+                ) : (
+                  <p className="mt-1.5 text-sm text-r-muted">No note yet.</p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onEditHighlight(open.id)}
+                  className="mt-2 -ml-1 rounded-lg px-1 py-1 text-[13px] font-semibold text-r-link"
+                >
+                  {open.note ? "Edit note or colour" : "Add a note"}
+                </button>
               </div>
             )}
           </Fragment>

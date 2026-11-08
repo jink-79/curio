@@ -1,4 +1,4 @@
-import type { Category, Highlight, LessonView, PathOutline } from "../types";
+import type { Category, LessonView, PathOutline } from "../types";
 
 /*
  * Temporary seed data so the reader screen can be built and tried on a phone
@@ -181,14 +181,6 @@ export const SAMPLE_LESSON: LessonView = {
   ],
 };
 
-export const SAMPLE_HIGHLIGHTS: Highlight[] = [
-  {
-    id: "hl-1",
-    blockId: "what-it-did",
-    exact: "It held Germany and its allies responsible for the loss and damage caused by the war",
-    note: "Compare with how the 1945 settlement handled blame — Stage 4.",
-  },
-];
 
 /** Lessons with written content, by lessonKey. Others show "not written yet". */
 export const SAMPLE_LESSONS: Record<string, LessonView> = {

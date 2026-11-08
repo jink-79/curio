@@ -1,4 +1,5 @@
 import type { Highlight } from "../types";
+import { locateQuote } from "./quote";
 
 /**
  * Authored lesson text is a tiny, safe Markdown subset:
@@ -52,8 +53,7 @@ interface Range {
 export function findRanges(plain: string, highlights: Highlight[]): Range[] {
   const ranges: Range[] = [];
   for (const h of highlights) {
-    if (h.exact.length === 0) continue;
-    const start = plain.indexOf(h.exact);
+    const start = locateQuote(plain, h);
     if (start === -1) continue;
     const range = { start, end: start + h.exact.length, id: h.id };
     if (ranges.some((r) => range.start < r.end && r.start < range.end)) continue; // overlap: first wins
@@ -98,5 +98,5 @@ export function orphanedHighlights(markdown: string, highlights: Highlight[]): H
   const plain = splitParagraphs(markdown)
     .map((p) => parseInline(p).map((s) => s.text).join(""))
     .join("\n");
-  return highlights.filter((h) => !plain.includes(h.exact));
+  return highlights.filter((h) => locateQuote(plain, h) === -1);
 }

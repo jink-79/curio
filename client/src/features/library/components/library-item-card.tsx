@@ -28,14 +28,16 @@ export function LibraryItemCard({ item }: { item: LibraryItem }) {
     return (
       <Link to={`${lessonUrl}?block=${encodeURIComponent(item.blockId)}&hl=${encodeURIComponent(hl)}`} className={cardClass}>
         <span className="sr-only">Highlight: </span>
-        <blockquote className="border-l-[3px] border-r-primary pl-3 font-serif text-[16px] leading-normal">{item.quote}</blockquote>
+        <blockquote className="border-l-[3px] pl-3 font-serif text-[16px] leading-normal" style={{ borderColor: `var(--hl-solid-${item.color})` }}>
+          {item.quote}
+        </blockquote>
         {item.note && (
-          <p className="mt-2.5 text-sm leading-normal">
+          <p className="mt-2.5 text-sm leading-normal whitespace-pre-line">
             <span className="sr-only">Note: </span>
             {item.note}
           </p>
         )}
-        <Footer item={item} label={item.note ? "Note" : "Highlight"} />
+        <Footer item={item} label={ago ? `${item.note ? "Note" : "Highlight"} · ${ago}` : item.note ? "Note" : "Highlight"} />
       </Link>
     );
   }

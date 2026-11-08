@@ -1,6 +1,6 @@
 import { normalize } from "@/features/discover/lib/search";
 import type { LessonProgress } from "@/features/reading/hooks/use-lesson-progress";
-import type { Highlight, LessonView, PathOutline } from "@/features/reading/types";
+import type { Highlight, HighlightColor, LessonView, PathOutline } from "@/features/reading/types";
 
 export interface LessonRef {
   pathId: string;
@@ -11,7 +11,7 @@ export interface LessonRef {
 }
 
 export type LibraryItem =
-  | { kind: "highlight"; id: string; lesson: LessonRef; blockId: string; quote: string; note?: string; at?: number }
+  | { kind: "highlight"; id: string; lesson: LessonRef; blockId: string; quote: string; color: HighlightColor; note?: string; at?: number }
   | { kind: "bookmark"; id: string; lesson: LessonRef; at?: number }
   | { kind: "read"; id: string; lesson: LessonRef; completed: boolean; percent: number; at?: number };
 
@@ -51,8 +51,18 @@ export function buildLibrary({ paths, lessons, highlights, progressOf }: Sources
         const lesson = lessons[l.lessonKey];
         if (lesson) {
           for (const h of highlights) {
-            if (!lesson.blocks.some((b) => b.id === h.blockId)) continue;
-            items.push({ kind: "highlight", id: `h:${h.id}`, lesson: ref, blockId: h.blockId, quote: h.exact, ...(h.note ? { note: h.note } : {}), order });
+            if (h.lessonKey !== l.lessonKey || !lesson.blocks.some((b) => b.id === h.blockId)) continue;
+            items.push({
+              kind: "highlight",
+              id: `h:${h.id}`,
+              lesson: ref,
+              blockId: h.blockId,
+              quote: h.exact,
+              color: h.color,
+              ...(h.note ? { note: h.note } : {}),
+              at: h.updatedAt ?? h.createdAt,
+              order,
+            });
           }
         }
         if (p.bookmarked) items.push({ kind: "bookmark", id: `b:${l.lessonKey}`, lesson: ref, ...(p.bookmarkedAt ? { at: p.bookmarkedAt } : {}), order });

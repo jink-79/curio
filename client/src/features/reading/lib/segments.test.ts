@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { applyHighlights, orphanedHighlights, parseInline, splitParagraphs } from "./segments";
+const base = { lessonKey: "l", color: "blue" as const, createdAt: 0 };
 
 describe("splitParagraphs", () => {
   it("splits on blank lines and joins soft line breaks", () => {
@@ -27,11 +28,11 @@ describe("applyHighlights", () => {
   const segs = parseInline("The *quick* brown fox jumps.");
 
   it("returns segments unchanged with no matches", () => {
-    expect(applyHighlights(segs, [{ id: "h", blockId: "b", exact: "zebra" }])).toEqual(segs);
+    expect(applyHighlights(segs, [{ ...base, id: "h", blockId: "b", exact: "zebra" }])).toEqual(segs);
   });
 
   it("splits a highlight that spans styled runs", () => {
-    const out = applyHighlights(segs, [{ id: "h1", blockId: "b", exact: "quick brown" }]);
+    const out = applyHighlights(segs, [{ ...base, id: "h1", blockId: "b", exact: "quick brown" }]);
     expect(out.map((s) => [s.text, s.em, s.highlightId])).toEqual([
       ["The ", false, undefined],
       ["quick", true, "h1"],
@@ -43,8 +44,8 @@ describe("applyHighlights", () => {
 
   it("ignores a highlight that overlaps an earlier one", () => {
     const out = applyHighlights(segs, [
-      { id: "a", blockId: "b", exact: "quick brown" },
-      { id: "b", blockId: "b", exact: "brown fox" },
+      { ...base, id: "a", blockId: "b", exact: "quick brown" },
+      { ...base, id: "b", blockId: "b", exact: "brown fox" },
     ]);
     expect(out.filter((s) => s.highlightId === "b")).toHaveLength(0);
   });
@@ -54,8 +55,8 @@ describe("orphanedHighlights", () => {
   it("reports quotes that no longer appear in the text", () => {
     const md = "Kept *text* here.\n\nSecond para.";
     const result = orphanedHighlights(md, [
-      { id: "ok", blockId: "b", exact: "Kept text" },
-      { id: "gone", blockId: "b", exact: "removed words" },
+      { ...base, id: "ok", blockId: "b", exact: "Kept text" },
+      { ...base, id: "gone", blockId: "b", exact: "removed words" },
     ]);
     expect(result.map((h) => h.id)).toEqual(["gone"]);
   });

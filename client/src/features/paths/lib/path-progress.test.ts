@@ -6,7 +6,7 @@ const path: PathOutline = {
   pathId: "p",
   title: "P",
   description: "",
-  category: "",
+  categorySlug: "",
   difficulty: "",
   objectives: [],
   stages: [

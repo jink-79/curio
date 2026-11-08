@@ -1,4 +1,4 @@
-import type { Highlight, LessonView, PathOutline } from "../types";
+import type { Category, Highlight, LessonView, PathOutline } from "../types";
 
 /*
  * Temporary seed data so the reader screen can be built and tried on a phone
@@ -10,7 +10,7 @@ export const SAMPLE_PATH: PathOutline = {
   pathId: "world-war-2",
   title: "World War II",
   description: "From the peace of 1919 to the start of the Cold War — why it happened, how it unfolded and what it left behind.",
-  category: "History",
+  categorySlug: "history",
   difficulty: "Beginner",
   objectives: [
     "Explain why a second world war broke out only twenty years after the first.",
@@ -195,6 +195,73 @@ export const SAMPLE_LESSONS: Record<string, LessonView> = {
   [SAMPLE_LESSON.lessonKey]: SAMPLE_LESSON,
 };
 
+/** The ten launch categories from the product brief. New ones are data, not code. */
+export const SAMPLE_CATEGORIES: Category[] = [
+  { slug: "history", name: "History", description: "How the past unfolded, and why it still shapes today.", icon: "landmark" },
+  { slug: "technology", name: "Technology", description: "The tools and systems that changed how we live.", icon: "cpu" },
+  { slug: "artificial-intelligence", name: "Artificial Intelligence", description: "From early ideas about thinking machines to modern AI.", icon: "sparkles" },
+  { slug: "science", name: "Science", description: "How the natural world works, and how we found out.", icon: "flask" },
+  { slug: "business", name: "Business", description: "How organisations are built, run and grown.", icon: "briefcase" },
+  { slug: "finance", name: "Finance", description: "Money, markets and the decisions behind them.", icon: "trending-up" },
+  { slug: "philosophy", name: "Philosophy", description: "The big questions, and the people who asked them.", icon: "scale" },
+  { slug: "psychology", name: "Psychology", description: "How minds work: thought, emotion and behaviour.", icon: "brain" },
+  { slug: "mathematics", name: "Mathematics", description: "Ideas of number, shape and proof.", icon: "sigma" },
+  { slug: "programming", name: "Programming", description: "Writing software, from first principles up.", icon: "code" },
+];
+
+/** Curriculum from the product brief's example. No lessons are written yet. */
+export const SAMPLE_AI_PATH: PathOutline = {
+  pathId: "history-of-ai",
+  title: "History of Artificial Intelligence",
+  description: "From the first computers to today’s generative models — the ideas, setbacks and breakthroughs that built modern AI.",
+  categorySlug: "artificial-intelligence",
+  difficulty: "Beginner",
+  objectives: [
+    "Trace how AI moved from symbolic reasoning to learning from data.",
+    "Explain why AI went through boom-and-bust cycles.",
+    "Understand what transformers and large language models changed.",
+  ],
+  stages: [
+    {
+      number: 1,
+      title: "Beginnings",
+      lessons: [
+        { lessonKey: "foundations-of-computing", title: "Foundations of Computing", minutes: 10, summary: "Turing, computability and the first computers" },
+        { lessonKey: "early-ai", title: "Early Artificial Intelligence", minutes: 9, summary: "Can machines think?" },
+        { lessonKey: "dartmouth-conference", title: "The Dartmouth Conference", minutes: 8, summary: "1956: AI gets its name" },
+      ],
+    },
+    {
+      number: 2,
+      title: "Booms and winters",
+      lessons: [
+        { lessonKey: "symbolic-ai", title: "Symbolic AI and Expert Systems", minutes: 11, summary: "Rules, logic and knowledge bases" },
+        { lessonKey: "ai-winters", title: "AI Winters", minutes: 9, summary: "When funding and faith ran out" },
+      ],
+    },
+    {
+      number: 3,
+      title: "Learning from data",
+      lessons: [
+        { lessonKey: "machine-learning", title: "Machine Learning", minutes: 12, summary: "Programs that improve with experience" },
+        { lessonKey: "neural-networks", title: "Neural Networks", minutes: 12, summary: "From the perceptron to backpropagation" },
+        { lessonKey: "deep-learning", title: "Deep Learning", minutes: 12, summary: "Data, GPUs and many layers" },
+      ],
+    },
+    {
+      number: 4,
+      title: "The modern era",
+      lessons: [
+        { lessonKey: "transformers", title: "Transformers", minutes: 12, summary: "Attention is all you need" },
+        { lessonKey: "large-language-models", title: "Large Language Models", minutes: 12, summary: "Scale, pre-training and prompting" },
+        { lessonKey: "generative-ai", title: "Modern Generative AI", minutes: 11, summary: "Text, images and beyond" },
+        { lessonKey: "future-of-ai", title: "Future of Artificial Intelligence", minutes: 9, summary: "Open questions and debates" },
+      ],
+    },
+  ],
+};
+
 export const SAMPLE_PATHS: Record<string, PathOutline> = {
   [SAMPLE_PATH.pathId]: SAMPLE_PATH,
+  [SAMPLE_AI_PATH.pathId]: SAMPLE_AI_PATH,
 };

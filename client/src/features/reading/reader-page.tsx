@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
-import { type CSSProperties, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { type CSSProperties, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { usePathProgress } from "@/features/paths/hooks/use-path-progress";
 import { BlockRenderer } from "./components/blocks/block-renderer";
 import { ContentsSheet } from "./components/contents-sheet";
 import { LessonHeader } from "./components/lesson-header";
@@ -8,38 +9,38 @@ import { NotesSheet } from "./components/notes-sheet";
 import { ReaderBottomBar } from "./components/reader-bottom-bar";
 import { ReaderTopBar } from "./components/reader-top-bar";
 import { SettingsSheet } from "./components/settings-sheet";
-import { SAMPLE_HIGHLIGHTS, SAMPLE_LESSON, SAMPLE_PATH } from "./data/sample";
+import { LessonUnavailable } from "./components/lesson-unavailable";
+import { SAMPLE_HIGHLIGHTS, SAMPLE_LESSONS, SAMPLE_PATHS } from "./data/sample";
 import { useLessonProgress } from "./hooks/use-lesson-progress";
-import { useReaderSettings } from "./hooks/use-reader-settings";
+import { useReaderSettings } from "./reader-settings";
 import { scrollProgress } from "./lib/progress";
 import { orphanedHighlights } from "./lib/segments";
 import { FONT_SIZES, LINE_HEIGHTS } from "./lib/settings";
+import type { LessonView, PathOutline } from "./types";
 
 type Sheet = "settings" | "contents" | "notes" | null;
 
+/** Route entry: resolves the lesson (sample data until the API exists). */
 export function ReaderPage() {
-  // Single sample lesson until the API exists; the route already carries pathId/lessonKey.
-  const lesson = SAMPLE_LESSON;
-  const path = SAMPLE_PATH;
-  const highlights = SAMPLE_HIGHLIGHTS;
+  const { pathId = "", lessonKey = "" } = useParams();
+  const path = SAMPLE_PATHS[pathId];
+  const lesson = SAMPLE_LESSONS[lessonKey];
+  if (!path || !lesson || lesson.pathId !== pathId) {
+    return <LessonUnavailable pathId={path ? pathId : null} title={path?.stages.flatMap((s) => s.lessons).find((l) => l.lessonKey === lessonKey)?.title} />;
+  }
+  // key: a different lesson gets fresh reader state (scroll, sheets, progress hook).
+  return <Reader key={lesson.lessonKey} lesson={lesson} path={path} />;
+}
+
+function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
+  const highlights = SAMPLE_HIGHLIGHTS.filter((h) => lesson.blocks.some((b) => b.id === h.blockId));
 
   const [settings, setSettings] = useReaderSettings();
   const { progress, toggleBookmark, toggleComplete, reportScroll } = useLessonProgress(lesson.lessonKey, lesson.estimatedMinutes);
   const [scrollPct, setScrollPct] = useState(0);
   const [sheet, setSheet] = useState<Sheet>(null);
   const [openHighlightId, setOpenHighlightId] = useState<string | null>(null);
-
-  // Theme lives on <html> so sheets (portalled to <body>) pick it up too.
-  useEffect(() => {
-    const root = document.documentElement;
-    root.dataset.readerTheme = settings.theme;
-    root.dataset.readerPairing = settings.pairing;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", getComputedStyle(root).getPropertyValue("--r-bar").trim());
-    return () => {
-      delete root.dataset.readerTheme;
-      delete root.dataset.readerPairing;
-    };
-  }, [settings.theme, settings.pairing]);
+  const pathProgress = usePathProgress(path);
 
   const textStyle: CSSProperties = {
     fontSize: FONT_SIZES[settings.fontStep],
@@ -124,7 +125,13 @@ export function ReaderPage() {
       />
 
       <SettingsSheet {...sheetProps("settings")} settings={settings} onChange={setSettings} />
-      <ContentsSheet {...sheetProps("contents")} path={path} currentLessonKey={lesson.lessonKey} currentCompleted={progress.completed} />
+      <ContentsSheet
+        {...sheetProps("contents")}
+        path={path}
+        currentLessonKey={lesson.lessonKey}
+        currentCompleted={progress.completed}
+        statuses={pathProgress.statuses}
+      />
       <NotesSheet {...sheetProps("notes")} highlights={highlights} orphaned={orphaned} />
     </div>
   );

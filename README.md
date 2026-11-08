@@ -10,8 +10,10 @@ We're building one screen at a time, phone-first.
 
 | Screen | State |
 |---|---|
-| Reader (`/read/:pathId/:lessonKey`) | Built. Uses sample data; settings and progress are saved on the device. |
-| Path overview (`/p/:pathId`) | Next. Shows a placeholder for now. |
+| Path overview (`/p/:pathId`, the app's start screen) | Built. Shows progress, a Continue button and the stage-by-stage curriculum. |
+| Reader (`/read/:pathId/:lessonKey`) | Built. Has reading settings, type pairings and themes. |
+
+Both screens use sample data (one World War II path, one written lesson). Progress and settings are saved on the device until accounts exist.
 
 The API so far has only its base (health check, error handling, config); no product endpoints yet. Planning documents are in [`docs/`](docs/README.md), starting with [`docs/00-critical-review.md`](docs/00-critical-review.md).
 

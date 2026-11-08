@@ -9,38 +9,46 @@ import type { Highlight, LessonView, PathOutline } from "../types";
 export const SAMPLE_PATH: PathOutline = {
   pathId: "world-war-2",
   title: "World War II",
+  description: "From the peace of 1919 to the start of the Cold War — why it happened, how it unfolded and what it left behind.",
+  category: "History",
+  difficulty: "Beginner",
+  objectives: [
+    "Explain why a second world war broke out only twenty years after the first.",
+    "Follow the war’s main phases and the turning points that decided it.",
+    "Connect the war’s end to the start of the Cold War.",
+  ],
   stages: [
     {
       number: 1,
       title: "Origins",
       lessons: [
-        { lessonKey: "background", title: "Background and origins", minutes: 9, status: "done" },
-        { lessonKey: "treaty-of-versailles", title: "The Treaty of Versailles", minutes: 8, status: "current" },
-        { lessonKey: "great-depression", title: "The Great Depression", minutes: 10, status: "todo" },
+        { lessonKey: "background", title: "Background and origins", minutes: 9, summary: "The world the First World War left behind", seedCompleted: true },
+        { lessonKey: "treaty-of-versailles", title: "The Treaty of Versailles", minutes: 8, summary: "A peace that bred resentment" },
+        { lessonKey: "great-depression", title: "The Great Depression", minutes: 10, summary: "How economic collapse fed extremism" },
       ],
     },
     {
       number: 2,
       title: "Road to war",
       lessons: [
-        { lessonKey: "rise-of-nazi-germany", title: "Rise of Nazi Germany", minutes: 12, status: "todo" },
-        { lessonKey: "invasion-of-poland", title: "Invasion of Poland", minutes: 8, status: "todo" },
+        { lessonKey: "rise-of-nazi-germany", title: "Rise of Nazi Germany", minutes: 12, summary: "From fringe party to dictatorship" },
+        { lessonKey: "invasion-of-poland", title: "Invasion of Poland", minutes: 8, summary: "September 1939" },
       ],
     },
     {
       number: 3,
       title: "A global war",
       lessons: [
-        { lessonKey: "expansion", title: "Expansion of the war", minutes: 14, status: "todo" },
-        { lessonKey: "turning-points", title: "Major turning points", minutes: 15, status: "todo" },
+        { lessonKey: "expansion", title: "Expansion of the war", minutes: 14, summary: "Europe, Africa and the Pacific" },
+        { lessonKey: "turning-points", title: "Major turning points", minutes: 15, summary: "Stalingrad, Midway, El Alamein" },
       ],
     },
     {
       number: 4,
       title: "Endings",
       lessons: [
-        { lessonKey: "end-of-war", title: "End of the war", minutes: 11, status: "todo" },
-        { lessonKey: "aftermath", title: "Aftermath and the Cold War", minutes: 13, status: "todo" },
+        { lessonKey: "end-of-war", title: "End of the war", minutes: 11, summary: "1945 in Europe and Asia" },
+        { lessonKey: "aftermath", title: "Aftermath and the Cold War", minutes: 13, summary: "A new world order" },
       ],
     },
   ],
@@ -181,3 +189,12 @@ export const SAMPLE_HIGHLIGHTS: Highlight[] = [
     note: "Compare with how the 1945 settlement handled blame — Stage 4.",
   },
 ];
+
+/** Lessons with written content, by lessonKey. Others show "not written yet". */
+export const SAMPLE_LESSONS: Record<string, LessonView> = {
+  [SAMPLE_LESSON.lessonKey]: SAMPLE_LESSON,
+};
+
+export const SAMPLE_PATHS: Record<string, PathOutline> = {
+  [SAMPLE_PATH.pathId]: SAMPLE_PATH,
+};

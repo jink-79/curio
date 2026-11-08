@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
-import { type CSSProperties, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
+import { Link, useParams, useSearchParams } from "react-router-dom";
+import { cn } from "@/lib/cn";
 import { usePathProgress } from "@/features/paths/hooks/use-path-progress";
 import { BlockRenderer } from "./components/blocks/block-renderer";
 import { ContentsSheet } from "./components/contents-sheet";
@@ -39,7 +40,17 @@ function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
   const { progress, toggleBookmark, toggleComplete, reportScroll } = useLessonProgress(lesson.lessonKey, lesson.estimatedMinutes);
   const [scrollPct, setScrollPct] = useState(0);
   const [sheet, setSheet] = useState<Sheet>(null);
-  const [openHighlightId, setOpenHighlightId] = useState<string | null>(null);
+  // Deep link from the Library: ?block=<blockId>&hl=<highlightId> scrolls to the passage and opens its note.
+  const [params] = useSearchParams();
+  const targetBlock = params.get("block");
+  const [openHighlightId, setOpenHighlightId] = useState<string | null>(() => params.get("hl"));
+  const [flashBlock, setFlashBlock] = useState<string | null>(targetBlock);
+  useEffect(() => {
+    if (!targetBlock) return;
+    document.getElementById(`block-${targetBlock}`)?.scrollIntoView({ block: "start" });
+    const t = window.setTimeout(() => setFlashBlock(null), 1600);
+    return () => window.clearTimeout(t);
+  }, [targetBlock]);
   const pathProgress = usePathProgress(path);
 
   const textStyle: CSSProperties = {
@@ -89,14 +100,19 @@ function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
         <article className="mx-auto max-w-[68ch] px-5.5 pt-5.5 pb-10 font-reading">
           <LessonHeader lesson={lesson} sourceCount={sourceCount} />
           {lesson.blocks.map((block) => (
-            <BlockRenderer
+            <div
               key={block.id}
-              block={block}
-              highlights={highlights}
-              openHighlightId={openHighlightId}
-              onToggleHighlight={(id) => setOpenHighlightId((cur) => (cur === id ? null : id))}
-              textStyle={textStyle}
-            />
+              id={`block-${block.id}`}
+              className={cn("-mx-2 scroll-mt-3 rounded-xl px-2 transition-colors duration-700", flashBlock === block.id ? "bg-r-accent-bg" : "bg-transparent")}
+            >
+              <BlockRenderer
+                block={block}
+                highlights={highlights}
+                openHighlightId={openHighlightId}
+                onToggleHighlight={(id) => setOpenHighlightId((cur) => (cur === id ? null : id))}
+                textStyle={textStyle}
+              />
+            </div>
           ))}
 
           {lesson.next && (

@@ -1,4 +1,4 @@
-import { BookOpen, Compass } from "lucide-react";
+import { BookOpen, Compass, Library } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { cn } from "@/lib/cn";
 import { lastPathId } from "./last-path";
@@ -14,6 +14,7 @@ export function AppLayout() {
   const tabs = [
     { to: "/discover", label: "Discover", icon: Compass, active: pathname.startsWith("/discover") },
     { to: `/p/${lastPathId()}`, label: "Learning", icon: BookOpen, active: pathname.startsWith("/p/") },
+    { to: "/library", label: "Library", icon: Library, active: pathname.startsWith("/library") },
   ];
 
   return (

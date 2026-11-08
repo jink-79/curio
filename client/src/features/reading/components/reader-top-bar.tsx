@@ -14,7 +14,7 @@ interface ReaderTopBarProps {
 export function ReaderTopBar(props: ReaderTopBarProps) {
   const { backTo, stageLabel, positionLabel, progress, bookmarked, onToggleBookmark, onOpenSettings } = props;
   return (
-    <header className="shrink-0 border-b border-r-border bg-r-bar pt-[env(safe-area-inset-top)]">
+    <header className="shrink-0 bg-r-bar pt-[env(safe-area-inset-top)]">
       <div className="flex h-[52px] items-center gap-1 px-1.5">
         <Link to={backTo} aria-label="Back to path" className="grid size-11 place-items-center rounded-xl text-r-text">
           <ChevronLeft className="size-[22px]" strokeWidth={1.8} />
@@ -47,7 +47,7 @@ export function ReaderTopBar(props: ReaderTopBarProps) {
         aria-valuenow={progress}
         aria-valuemin={0}
         aria-valuemax={100}
-        className="h-0.5 bg-r-track"
+        className="h-0.5 bg-r-border"
       >
         <div className="h-0.5 bg-brand transition-[width] duration-150 ease-out" style={{ width: `${progress}%` }} />
       </div>

@@ -7,12 +7,12 @@ export function LessonHeader({ lesson, sourceCount }: { lesson: LessonView; sour
   return (
     <div>
       <div className="flex items-center gap-2">
-        <span aria-hidden className="size-1.5 rounded-full bg-brand" />
+        <span aria-hidden className="size-1.5 rounded-full bg-r-primary" />
         <span className="text-[11px] font-semibold tracking-[0.14em] text-r-muted uppercase">
           {lesson.pathTitle} · {lesson.category}
         </span>
       </div>
-      <h1 className="mt-2.5 mb-2 font-display text-[30px] leading-[1.12] font-semibold">{lesson.title}</h1>
+      <h1 className="mt-2.5 mb-2 font-serif text-[32px] leading-[1.12] font-medium tracking-[-0.01em]">{lesson.title}</h1>
       <p className="text-[15px] leading-normal text-r-muted">{lesson.subtitle}</p>
 
       <div className="mt-3.5 flex flex-wrap gap-1.5">

@@ -31,7 +31,7 @@ export function ReaderBottomBar({ completed, noteCount, onOpenContents, onOpenNo
         aria-pressed={completed}
         className={cn(
           "flex h-[46px] flex-1 items-center justify-center gap-2 rounded-[14px] border text-[15px] font-semibold transition-colors",
-          completed ? "border-r-ok bg-r-ok-bg text-r-ok" : "border-brand bg-brand text-on-brand active:bg-brand-hover",
+          completed ? "border-r-ok bg-r-ok-bg text-r-ok" : "border-r-primary bg-r-primary text-r-on-primary active:bg-r-primary-hover",
         )}
       >
         <Check className="size-[18px]" strokeWidth={2.4} />

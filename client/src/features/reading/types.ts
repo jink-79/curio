@@ -3,7 +3,8 @@
  * and will move to a shared package once the API exists.
  */
 
-export type ReaderTheme = "dark" | "dim" | "light" | "sepia";
+export type ReaderTheme = "dark" | "dim" | "light" | "tidepool";
+export type TypePairing = "tidepool" | "fern" | "bookmark";
 export type Typeface = "serif" | "sans";
 export type LineSpacing = "compact" | "comfort" | "airy";
 

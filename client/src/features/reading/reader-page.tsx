@@ -33,16 +33,18 @@ export function ReaderPage() {
   useEffect(() => {
     const root = document.documentElement;
     root.dataset.readerTheme = settings.theme;
+    root.dataset.readerPairing = settings.pairing;
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content", getComputedStyle(root).getPropertyValue("--r-bar").trim());
     return () => {
       delete root.dataset.readerTheme;
+      delete root.dataset.readerPairing;
     };
-  }, [settings.theme]);
+  }, [settings.theme, settings.pairing]);
 
   const textStyle: CSSProperties = {
     fontSize: FONT_SIZES[settings.fontStep],
     lineHeight: LINE_HEIGHTS[settings.spacing],
-    fontFamily: settings.typeface === "serif" ? "var(--font-serif)" : "var(--font-sans)",
+    fontFamily: settings.typeface === "serif" ? "var(--font-read-serif)" : "var(--font-read-sans)",
   };
 
   const sourceCount = useMemo(
@@ -83,7 +85,7 @@ export function ReaderPage() {
           reportScroll(pct);
         }}
       >
-        <article className="mx-auto max-w-[68ch] px-5.5 pt-5.5 pb-10">
+        <article className="mx-auto max-w-[68ch] px-5.5 pt-5.5 pb-10 font-reading">
           <LessonHeader lesson={lesson} sourceCount={sourceCount} />
           {lesson.blocks.map((block) => (
             <BlockRenderer

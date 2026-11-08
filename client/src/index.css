@@ -1,20 +1,33 @@
 @import "tailwindcss";
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/space-grotesk";
-@import "@fontsource-variable/source-serif-4";
+/* Reader type pairings. Browsers only download the faces a page actually uses,
+   so declaring all three pairings costs nothing until one is picked. */
+@import "@fontsource-variable/newsreader/opsz.css";
+@import "@fontsource-variable/newsreader/opsz-italic.css";
+@import "@fontsource-variable/dm-sans";
+@import "@fontsource-variable/lora/wght.css";
+@import "@fontsource-variable/lora/wght-italic.css";
+@import "@fontsource-variable/manrope";
+@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource-variable/fraunces/opsz-italic.css";
+@import "@fontsource-variable/plus-jakarta-sans";
 
 /*
  * CURIO design tokens — see docs/09-design-system.md.
  *
- * App chrome is always dark. The reader content can switch theme, so the
- * reader sets `data-reader-theme` on its root and every reader surface reads
- * the --r-* variables below. All text/background pairs pass WCAG AA.
+ * The reader can switch theme and type pairing, so it sets
+ * `data-reader-theme` and `data-reader-pairing` on <html> and every reader
+ * surface reads the --r-* / --font-read-* variables below.
+ * All text/background pairs pass WCAG AA.
  */
 
 @theme inline {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk Variable", "Inter Variable", ui-sans-serif, sans-serif;
-  --font-serif: "Source Serif 4 Variable", Georgia, serif;
+  /* Reading fonts follow the chosen pairing. */
+  --font-serif: var(--font-read-serif);
+  --font-reading: var(--font-read-sans);
 
   --color-brand: #4c7ff5;
   --color-brand-hover: #6b95f7;
@@ -38,6 +51,24 @@
   --color-r-ok-bg: var(--r-ok-bg);
   --color-r-bad: var(--r-bad);
   --color-r-on-status: var(--r-on-status);
+  --color-r-primary: var(--r-primary);
+  --color-r-primary-hover: var(--r-primary-hover);
+  --color-r-on-primary: var(--r-on-primary);
+}
+
+/* Type pairings: a reading serif plus a companion sans. */
+:root,
+[data-reader-pairing="tidepool"] {
+  --font-read-serif: "Newsreader Variable", Georgia, serif;
+  --font-read-sans: "DM Sans Variable", ui-sans-serif, system-ui, sans-serif;
+}
+[data-reader-pairing="fern"] {
+  --font-read-serif: "Lora Variable", Georgia, serif;
+  --font-read-sans: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+}
+[data-reader-pairing="bookmark"] {
+  --font-read-serif: "Fraunces Variable", Georgia, serif;
+  --font-read-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root,
@@ -59,6 +90,9 @@
   --r-ok-bg: rgb(34 197 94 / 0.14);
   --r-bad: #f87171;
   --r-on-status: #080d12;
+  --r-primary: #4c7ff5;
+  --r-primary-hover: #6b95f7;
+  --r-on-primary: #080d12;
 }
 
 [data-reader-theme="dim"] {
@@ -79,6 +113,9 @@
   --r-ok-bg: rgb(74 222 128 / 0.14);
   --r-bad: #f87171;
   --r-on-status: #080d12;
+  --r-primary: #4c7ff5;
+  --r-primary-hover: #6b95f7;
+  --r-on-primary: #080d12;
 }
 
 [data-reader-theme="light"] {
@@ -99,27 +136,36 @@
   --r-ok-bg: rgb(21 128 61 / 0.1);
   --r-bad: #b91c1c;
   --r-on-status: #ffffff;
+  --r-primary: #4c7ff5;
+  --r-primary-hover: #6b95f7;
+  --r-on-primary: #080d12;
 }
 
-[data-reader-theme="sepia"] {
-  --r-bg: #f4ecd8;
-  --r-bar: #f7f0df;
-  --r-sheet: #fbf5e6;
-  --r-card: #fbf5e6;
-  --r-chip: #efe5cc;
-  --r-text: #3b3024;
-  --r-muted: #6b5d4a;
-  --r-border: #e2d6bc;
-  --r-border-strong: #9c8a6e;
-  --r-track: #e6dac0;
-  --r-link: #2b59cc;
-  --r-accent-bg: rgb(43 89 204 / 0.1);
-  --r-highlight: rgb(214 158 46 / 0.32);
+/* Tidepool: cool, steady blue for long reads (palette F5F8FC · DCE8F2 ·
+   7599BC · 276C83 · 183349). 7599BC fails as text, so it is never used for it. */
+[data-reader-theme="tidepool"] {
+  --r-bg: #f5f8fc;
+  --r-bar: #f5f8fc;
+  --r-sheet: #ffffff;
+  --r-card: #ffffff;
+  --r-chip: #eef3f9;
+  --r-text: #183349;
+  --r-muted: #52677d;
+  --r-border: #dce8f2;
+  --r-border-strong: #6f8fb0;
+  --r-track: #dce8f2;
+  --r-link: #276c83;
+  --r-accent-bg: rgb(39 108 131 / 0.1);
+  --r-highlight: rgb(117 153 188 / 0.32);
   --r-ok: #15803d;
   --r-ok-bg: rgb(21 128 61 / 0.1);
   --r-bad: #b91c1c;
   --r-on-status: #ffffff;
+  --r-primary: #276c83;
+  --r-primary-hover: #1f5a6e;
+  --r-on-primary: #ffffff;
 }
+
 
 @layer base {
   html,

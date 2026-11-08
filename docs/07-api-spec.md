@@ -1,6 +1,6 @@
 # 07 — API Specification (REST, v1)
 
-Base: `/api/v1`. JSON only. Every request body and query is validated by Zod schemas from `packages/shared`, so the frontend and backend use the same definitions.
+Base: `/api/v1`. JSON only. Every request body and query is validated by Zod schemas from `shared/`, so the frontend and backend use the same definitions.
 
 ## 1. Conventions
 

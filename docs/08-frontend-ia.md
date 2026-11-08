@@ -63,7 +63,7 @@ On mobile, both side panels become drawers. Selecting text shows a popover with 
 ## 4. Frontend code structure
 
 ```
-apps/web/src/
+client/src/
   app/            router.tsx, providers.tsx (QueryClient, Theme, Auth), layout/
   lib/            api-client.ts (axios instance + CSRF + error mapping), query-keys.ts, format.ts
   components/ui/  shadcn/ui generated primitives (Button, Dialog, Sheet, Tabs, Tooltip…)
@@ -76,7 +76,7 @@ apps/web/src/
 
 **Rules**
 - Server state lives only in TanStack Query. UI-only state lives in component state or a tiny context (theme, reader prefs). No Redux.
-- All API types are imported from `@curio/shared`. No hand-written duplicate types.
+- All API types are imported from `shared/`. No hand-written duplicate types.
 - Every query has explicit loading, empty and error states, using the shared `<QueryBoundary>` component.
 - Forms use controlled inputs validated with the shared Zod schemas. The `react-hook-form` + `@hookform/resolvers` dependencies are **[PROPOSED]** because they are standard with shadcn forms. The alternative is hand-rolled forms.
 - Optimistic updates are used only for overlays (bookmark, highlight, progress). Curriculum edits wait for the server's revision.

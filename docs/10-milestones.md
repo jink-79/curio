@@ -7,7 +7,7 @@ Size: S ≈ 2–4 days, M ≈ 1–2 weeks, L ≈ 2–3 weeks for one experienced
 ## Phase 1 — Foundation
 
 ### M1. Repository & toolchain (S)
-- An npm-workspaces monorepo: `apps/web` (Vite + React + TS + Tailwind + shadcn/ui), `apps/api` (Express + TS), `apps/worker`, and `packages/shared` (Zod schemas + types).
+- `client/` from the official `create-vite` React + TypeScript template (+ Tailwind, React Router, Radix/shadcn-style UI), `server/` (Express + TS) when the API starts, and `shared/` (Zod schemas + types) — see ADR-023.
 - Strict `tsconfig` (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`). ESLint + Prettier. Vitest (unit), Supertest (API), Playwright (a few end-to-end tests).
 - `docker-compose.yml` with a single-node Mongo replica set. `.env.example`.
 - Express skeleton: helmet, request ID, JSON logger (pino), error envelope, `/healthz`.

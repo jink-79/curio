@@ -15,7 +15,7 @@ export function ReaderBottomBar({ completed, noteCount, onOpenContents, onOpenNo
   return (
     <nav
       aria-label="Lesson"
-      className="flex shrink-0 items-center gap-1.5 border-t border-r-border bg-r-bar px-2.5 pt-1.5 pb-[max(10px,calc(env(safe-area-inset-bottom)-10px))]"
+      className="flex shrink-0 items-center gap-1.5 border-t border-r-border bg-r-bar px-2.5 pt-1.5 pb-[max(6px,calc(env(safe-area-inset-bottom)-14px))]"
     >
       <button type="button" onClick={onOpenContents} className={sideButton}>
         <List className="size-[21px]" strokeWidth={1.7} />

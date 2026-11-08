@@ -147,6 +147,19 @@
     cursor: pointer;
   }
 
+  /* App feel: long-pressing a control must not select its label or pop the
+     iOS copy/look-up callout, as it never would in a native app. Lesson text
+     stays selectable (highlighting depends on it). */
+  button,
+  nav,
+  header,
+  [role="radiogroup"],
+  [role="dialog"] h2 {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

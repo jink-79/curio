@@ -68,11 +68,19 @@ export interface PathLesson {
   seedCompleted?: boolean;
 }
 
+export interface Category {
+  slug: string;
+  name: string;
+  description: string;
+  /** Lucide icon name, mapped to a component in the UI. */
+  icon: "landmark" | "cpu" | "sparkles" | "flask" | "briefcase" | "trending-up" | "scale" | "brain" | "sigma" | "code";
+}
+
 export interface PathOutline {
   pathId: string;
   title: string;
   description: string;
-  category: string;
+  categorySlug: string;
   difficulty: string;
   objectives: string[];
   stages: { number: number; title: string; lessons: PathLesson[] }[];

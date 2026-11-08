@@ -1,6 +1,8 @@
-import { ArrowRight, Check, ChevronDown, Share } from "lucide-react";
-import { useState } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { ArrowRight, Check, ChevronDown, ChevronLeft, Share } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
+import { rememberPath } from "@/app/last-path";
+import { getCategory, pathStats } from "@/features/discover/lib/catalog";
 import { SAMPLE_PATHS } from "@/features/reading/data/sample";
 import type { PathOutline } from "@/features/reading/types";
 import { cn } from "@/lib/cn";
@@ -29,6 +31,13 @@ function CurioMark() {
 
 function PathOverview({ path }: { path: PathOutline }) {
   const progress = usePathProgress(path);
+  const category = getCategory(path.categorySlug);
+  const written = pathStats(path).written;
+  const location = useLocation();
+  const navigate = useNavigate();
+  // Arrived by navigating inside the app (e.g. from Discover): offer Back. Opened directly: show the brand.
+  const canGoBack = location.key !== "default";
+  useEffect(() => rememberPath(path.pathId), [path.pathId]);
   const totalMinutes = path.stages.flatMap((s) => s.lessons).reduce((m, l) => m + l.minutes, 0);
   const nextStage = progress.next?.stageNumber;
   const [openStages, setOpenStages] = useState<Set<number>>(() => new Set(nextStage ? [nextStage] : [1]));
@@ -56,12 +65,18 @@ function PathOverview({ path }: { path: PathOutline }) {
   const readPct = progress.next ? lessonReadPercent(progress.next.lessonKey) : 0;
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-r-bg text-r-text">
+    <>
       <header className="flex h-[52px] shrink-0 items-center justify-between bg-r-bg px-4 pt-[env(safe-area-inset-top)]">
-        <div className="flex items-center gap-2">
-          <CurioMark />
-          <span className="font-display text-[15px] font-semibold tracking-[0.08em]">CURIO</span>
-        </div>
+        {canGoBack ? (
+          <button type="button" onClick={() => navigate(-1)} aria-label="Back" className="-ml-2.5 grid size-11 place-items-center rounded-xl text-r-text">
+            <ChevronLeft className="size-[22px]" strokeWidth={1.8} />
+          </button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <CurioMark />
+            <span className="font-display text-[15px] font-semibold tracking-[0.08em]">CURIO</span>
+          </div>
+        )}
         <button type="button" onClick={share} aria-label="Share path" className="-mr-2.5 grid size-11 place-items-center rounded-xl text-r-text">
           <Share className="size-5" strokeWidth={1.8} />
         </button>
@@ -81,7 +96,14 @@ function PathOverview({ path }: { path: PathOutline }) {
           <div className="flex items-center gap-2">
             <span aria-hidden className="size-1.5 rounded-full bg-r-primary" />
             <span className="text-[11px] font-semibold tracking-[0.14em] text-r-muted uppercase">
-              {path.category} · {path.difficulty}
+              {category ? (
+                <Link to={`/discover/c/${category.slug}`} className="text-r-muted underline-offset-2 hover:underline">
+                  {category.name}
+                </Link>
+              ) : (
+                "Path"
+              )}{" "}
+              · {path.difficulty}
             </span>
           </div>
           <h1 className="mt-2.5 mb-2 font-serif text-[34px] leading-[1.08] font-medium tracking-[-0.01em]">{path.title}</h1>
@@ -123,6 +145,10 @@ function PathOverview({ path }: { path: PathOutline }) {
                 </span>
                 <ArrowRight className="size-5 shrink-0" strokeWidth={2} aria-hidden />
               </Link>
+            ) : written === 0 ? (
+              <p className="mt-3.5 rounded-[14px] bg-r-accent-bg px-4 py-3 text-sm text-r-text">
+                The curriculum is ready, but no lessons have been written yet.
+              </p>
             ) : (
               <p className="mt-3.5 flex items-center gap-2 rounded-[14px] bg-r-ok-bg px-4 py-3 text-sm text-r-ok">
                 <Check className="size-4" strokeWidth={2.4} aria-hidden />
@@ -209,6 +235,6 @@ function PathOverview({ path }: { path: PathOutline }) {
           </div>
         </div>
       </main>
-    </div>
+    </>
   );
 }

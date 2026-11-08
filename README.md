@@ -10,10 +10,12 @@ We're building one screen at a time, phone-first.
 
 | Screen | State |
 |---|---|
-| Path overview (`/p/:pathId`, the app's start screen) | Built. Shows progress, a Continue button and the stage-by-stage curriculum. |
+| Discover (`/discover`, the app's start screen) | Built. Search, continue-learning card, the 10 categories and all paths. |
+| Category (`/discover/c/:slug`) | Built. A category's paths, or an empty state. |
+| Path overview (`/p/:pathId`, the Learning tab) | Built. Shows progress, a Continue button and the stage-by-stage curriculum. |
 | Reader (`/read/:pathId/:lessonKey`) | Built. Has reading settings, type pairings and themes. |
 
-Both screens use sample data (one World War II path, one written lesson). Progress and settings are saved on the device until accounts exist.
+All screens use sample data: two paths (World War II, History of AI) and one written lesson. Progress and settings are saved on the device until accounts exist.
 
 The API so far has only its base (health check, error handling, config); no product endpoints yet. Planning documents are in [`docs/`](docs/README.md), starting with [`docs/00-critical-review.md`](docs/00-critical-review.md).
 

@@ -1,0 +1,176 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/source-serif-4";
+
+/*
+ * CURIO design tokens — see docs/09-design-system.md.
+ *
+ * App chrome is always dark. The reader content can switch theme, so the
+ * reader sets `data-reader-theme` on its root and every reader surface reads
+ * the --r-* variables below. All text/background pairs pass WCAG AA.
+ */
+
+@theme inline {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk Variable", "Inter Variable", ui-sans-serif, sans-serif;
+  --font-serif: "Source Serif 4 Variable", Georgia, serif;
+
+  --color-brand: #4c7ff5;
+  --color-brand-hover: #6b95f7;
+  --color-on-brand: #080d12;
+
+  /* reader surfaces (themeable) */
+  --color-r-bg: var(--r-bg);
+  --color-r-bar: var(--r-bar);
+  --color-r-sheet: var(--r-sheet);
+  --color-r-card: var(--r-card);
+  --color-r-chip: var(--r-chip);
+  --color-r-text: var(--r-text);
+  --color-r-muted: var(--r-muted);
+  --color-r-border: var(--r-border);
+  --color-r-border-strong: var(--r-border-strong);
+  --color-r-track: var(--r-track);
+  --color-r-link: var(--r-link);
+  --color-r-accent-bg: var(--r-accent-bg);
+  --color-r-highlight: var(--r-highlight);
+  --color-r-ok: var(--r-ok);
+  --color-r-ok-bg: var(--r-ok-bg);
+  --color-r-bad: var(--r-bad);
+  --color-r-on-status: var(--r-on-status);
+}
+
+:root,
+[data-reader-theme="dark"] {
+  --r-bg: #080d12;
+  --r-bar: #0c1218;
+  --r-sheet: #111820;
+  --r-card: #171f29;
+  --r-chip: #111820;
+  --r-text: #e8ecf1;
+  --r-muted: #9ba6b5;
+  --r-border: #27313d;
+  --r-border-strong: #64708a;
+  --r-track: #1b2430;
+  --r-link: #6b95f7;
+  --r-accent-bg: rgb(76 127 245 / 0.14);
+  --r-highlight: rgb(76 127 245 / 0.3);
+  --r-ok: #22c55e;
+  --r-ok-bg: rgb(34 197 94 / 0.14);
+  --r-bad: #f87171;
+  --r-on-status: #080d12;
+}
+
+[data-reader-theme="dim"] {
+  --r-bg: #1c232d;
+  --r-bar: #1f2732;
+  --r-sheet: #232b36;
+  --r-card: #252e3a;
+  --r-chip: #222a35;
+  --r-text: #e6e9ee;
+  --r-muted: #a3adbb;
+  --r-border: #34404f;
+  --r-border-strong: #6b7890;
+  --r-track: #2c3644;
+  --r-link: #7aa0f8;
+  --r-accent-bg: rgb(122 160 248 / 0.16);
+  --r-highlight: rgb(122 160 248 / 0.3);
+  --r-ok: #4ade80;
+  --r-ok-bg: rgb(74 222 128 / 0.14);
+  --r-bad: #f87171;
+  --r-on-status: #080d12;
+}
+
+[data-reader-theme="light"] {
+  --r-bg: #fafaf7;
+  --r-bar: #ffffff;
+  --r-sheet: #ffffff;
+  --r-card: #ffffff;
+  --r-chip: #f2f3f0;
+  --r-text: #1f2937;
+  --r-muted: #5b6472;
+  --r-border: #e3e5e8;
+  --r-border-strong: #8a93a3;
+  --r-track: #e8eaee;
+  --r-link: #2f5fd6;
+  --r-accent-bg: rgb(47 95 214 / 0.1);
+  --r-highlight: rgb(76 127 245 / 0.22);
+  --r-ok: #15803d;
+  --r-ok-bg: rgb(21 128 61 / 0.1);
+  --r-bad: #b91c1c;
+  --r-on-status: #ffffff;
+}
+
+[data-reader-theme="sepia"] {
+  --r-bg: #f4ecd8;
+  --r-bar: #f7f0df;
+  --r-sheet: #fbf5e6;
+  --r-card: #fbf5e6;
+  --r-chip: #efe5cc;
+  --r-text: #3b3024;
+  --r-muted: #6b5d4a;
+  --r-border: #e2d6bc;
+  --r-border-strong: #9c8a6e;
+  --r-track: #e6dac0;
+  --r-link: #2b59cc;
+  --r-accent-bg: rgb(43 89 204 / 0.1);
+  --r-highlight: rgb(214 158 46 / 0.32);
+  --r-ok: #15803d;
+  --r-ok-bg: rgb(21 128 61 / 0.1);
+  --r-bad: #b91c1c;
+  --r-on-status: #ffffff;
+}
+
+@layer base {
+  html,
+  body {
+    background-color: var(--r-bg);
+    color: var(--r-text);
+    font-family: var(--font-sans);
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.02em;
+  }
+
+  :focus-visible {
+    outline: 2px solid #4c7ff5;
+    outline-offset: 2px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* iOS zooms the page into any input under 16px on focus. */
+@media (max-width: 1023px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sheet-up {
+  from { transform: translateY(24px); opacity: 0.6; }
+  to { transform: translateY(0); opacity: 1; }
+}

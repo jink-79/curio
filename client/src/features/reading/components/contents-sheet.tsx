@@ -15,7 +15,7 @@ interface ContentsSheetProps {
 export function ContentsSheet({ open, onOpenChange, path, currentLessonKey, currentCompleted }: ContentsSheetProps) {
   const lessons = path.stages.flatMap((s) => s.lessons);
   const done = lessons.filter((l) => l.status === "done" || (l.lessonKey === currentLessonKey && currentCompleted)).length;
-  let n = 0;
+  const numberOf = new Map(lessons.map((l, i) => [l.lessonKey, i + 1]));
   return (
     <BottomSheet open={open} onOpenChange={onOpenChange} title="Contents">
       <p className="mb-1.5 text-[13px] text-r-muted">
@@ -28,7 +28,6 @@ export function ContentsSheet({ open, onOpenChange, path, currentLessonKey, curr
           </h3>
           <ol>
             {stage.lessons.map((l) => {
-              n += 1;
               const current = l.lessonKey === currentLessonKey;
               const status = current && currentCompleted ? "done" : l.status;
               return (
@@ -47,7 +46,7 @@ export function ContentsSheet({ open, onOpenChange, path, currentLessonKey, curr
                           : "border border-r-border-strong text-r-muted",
                     )}
                   >
-                    {status === "done" ? <Check className="size-3.5" strokeWidth={3} aria-label="Completed" /> : n}
+                    {status === "done" ? <Check className="size-3.5" strokeWidth={3} aria-label="Completed" /> : numberOf.get(l.lessonKey)}
                   </span>
                   <span className={cn("flex-1 text-sm", current ? "font-semibold" : "font-normal")}>{l.title}</span>
                   <span className="text-xs text-r-muted">{l.minutes} min</span>

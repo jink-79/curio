@@ -15,20 +15,26 @@ We're building one screen at a time, phone-first.
 
 There is no API yet. Planning documents are in [`docs/`](docs/README.md), starting with [`docs/00-critical-review.md`](docs/00-critical-review.md).
 
+## Repository layout
+
+| Folder | What |
+|---|---|
+| [`client/`](client/README.md) | The web app, a standard Vite + React + TypeScript project |
+| `server/` | The API, added when the backend starts |
+| [`docs/`](docs/README.md) | Product and architecture documents |
+
 ## Run locally
 
 ```bash
+cd client
 npm install
-npm run dev        # http://localhost:5173 (also on your LAN IP, so you can open it on a phone)
-npm test           # unit tests
-npm run typecheck
-npm run build
+npm run dev
 ```
 
-Requires Node 22+.
+See [`client/README.md`](client/README.md) for tests, lint and build.
 
 ## Deploy
 
-The app deploys on Vercel from `main` using [`vercel.json`](vercel.json). Every merge to `main` updates the live site, and every pull request gets its own preview URL.
+The app deploys on Vercel from `main`. In the Vercel project, set **Root Directory** to `client`; Vercel then detects Vite on its own, and [`client/vercel.json`](client/vercel.json) adds the SPA rewrite. Every merge to `main` updates the live site, and every pull request gets its own preview URL.
 
 Vercel's free Hobby plan only deploys commits authored by the account owner, so commits in this repo are authored as the owner (see ADR-022).

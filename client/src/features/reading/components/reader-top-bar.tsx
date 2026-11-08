@@ -28,7 +28,7 @@ export function ReaderTopBar(props: ReaderTopBarProps) {
           onClick={onToggleBookmark}
           aria-label={bookmarked ? "Remove bookmark" : "Bookmark lesson"}
           aria-pressed={bookmarked}
-          className={bookmarked ? "grid size-11 place-items-center rounded-xl text-brand" : "grid size-11 place-items-center rounded-xl text-r-text"}
+          className={bookmarked ? "grid size-11 place-items-center rounded-xl text-r-primary" : "grid size-11 place-items-center rounded-xl text-r-text"}
         >
           <Bookmark className="size-5" strokeWidth={1.8} fill={bookmarked ? "currentColor" : "none"} />
         </button>
@@ -49,7 +49,7 @@ export function ReaderTopBar(props: ReaderTopBarProps) {
         aria-valuemax={100}
         className="h-0.5 bg-r-border"
       >
-        <div className="h-0.5 bg-brand transition-[width] duration-150 ease-out" style={{ width: `${progress}%` }} />
+        <div className="h-0.5 bg-r-primary transition-[width] duration-150 ease-out" style={{ width: `${progress}%` }} />
       </div>
     </header>
   );

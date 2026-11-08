@@ -1,12 +1,19 @@
 import { useCallback, useState } from "react";
-import { readJson, writeJson } from "@/lib/storage";
-import { DEFAULT_SETTINGS, isReaderSettings, type ReaderSettings, SETTINGS_KEY } from "../lib/settings";
+import { writeJson } from "@/lib/storage";
+import { migrateSettings, type ReaderSettings, SETTINGS_KEY } from "../lib/settings";
+
+function readStored(): unknown {
+  try {
+    const raw = window.localStorage.getItem(SETTINGS_KEY);
+    return raw === null ? null : (JSON.parse(raw) as unknown);
+  } catch {
+    return null;
+  }
+}
 
 /** Reader preferences, remembered on this device (server sync comes with accounts). */
 export function useReaderSettings() {
-  const [settings, setSettings] = useState<ReaderSettings>(
-    () => readJson(SETTINGS_KEY, isReaderSettings) ?? DEFAULT_SETTINGS,
-  );
+  const [settings, setSettings] = useState<ReaderSettings>(() => migrateSettings(readStored()));
 
   const update = useCallback((next: ReaderSettings) => {
     setSettings(next);

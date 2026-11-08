@@ -72,7 +72,7 @@ export function TimelineBlock({ heading, items }: { heading: string; items: { da
         {items.map((d, i) => (
           <li key={d.date} className="flex gap-3.5">
             <div aria-hidden className="flex w-2.5 flex-col items-center">
-              <span className={d.emphasis ? "mt-1 size-2.5 rounded-full border-2 border-brand bg-brand" : "mt-1 size-2.5 rounded-full border-2 border-brand bg-r-bg"} />
+              <span className={d.emphasis ? "mt-1 size-2.5 rounded-full border-2 border-r-primary bg-r-primary" : "mt-1 size-2.5 rounded-full border-2 border-r-primary bg-r-bg"} />
               {i < items.length - 1 && <span className="my-1 w-0.5 flex-1 bg-r-border" />}
             </div>
             <div className="pb-4">
@@ -90,7 +90,7 @@ export function TakeawaysBlock({ items }: { items: string[] }) {
   return (
     <section className="mt-3.5 rounded-2xl border border-r-border bg-r-card p-4">
       <h2 className="mb-3 flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] text-r-muted uppercase">
-        <Lightbulb className="size-[15px] text-brand" strokeWidth={2} aria-hidden />
+        <Lightbulb className="size-[15px] text-r-primary" strokeWidth={2} aria-hidden />
         Key takeaways
       </h2>
       <ul className="flex flex-col gap-2.5">

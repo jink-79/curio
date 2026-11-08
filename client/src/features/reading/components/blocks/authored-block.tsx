@@ -73,7 +73,7 @@ export function AuthoredBlock({ heading, markdown, highlights, openHighlightId, 
             {openHere && (
               <div id={`note-${openHere.highlightId}`} className="-mt-1 mb-4 rounded-xl border border-r-border bg-r-card px-3.5 py-3">
                 <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.12em] text-r-muted uppercase">
-                  <span aria-hidden className="size-2 rounded-[2px] bg-brand" />
+                  <span aria-hidden className="size-2 rounded-[2px] bg-r-primary" />
                   {openNote ? "Your note" : "Highlight"}
                 </div>
                 <p className="mt-1.5 text-sm leading-normal">{openNote ?? "No note yet."}</p>

@@ -42,7 +42,7 @@ export function ContentsSheet({ open, onOpenChange, path, currentLessonKey, curr
                       status === "done"
                         ? "bg-r-ok text-r-on-status"
                         : current
-                          ? "border-2 border-brand text-r-link"
+                          ? "border-2 border-r-primary text-r-link"
                           : "border border-r-border-strong text-r-muted",
                     )}
                   >

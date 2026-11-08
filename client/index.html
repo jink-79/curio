@@ -3,14 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- viewport-fit=cover lets the app draw under the notch and home bar; the
+         layout pads itself with env(safe-area-inset-*) instead. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#080D12" />
+    <!-- Installable app: launched from the home screen it opens full-screen,
+         with no Safari address bar or toolbar. -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="CURIO" />
+    <!-- "black", not "black-translucent": with translucent, iOS sizes the
+         home-screen app's web view shorter than the screen but anchors it at
+         the very top, leaving an undrawable band under the bottom bar. With a
+         solid status bar the web view starts below it and runs to the real
+         bottom edge. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="theme-color" content="#080D12" />
+    <!-- Dates and numbers in lessons must not turn into phone links. -->
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
     <title>CURIO</title>
   </head>
   <body>

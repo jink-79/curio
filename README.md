@@ -13,6 +13,7 @@ We're building one screen at a time, phone-first.
 | Discover (`/discover`, the app's start screen) | Built. Search, continue-learning card, the 10 categories and all paths. |
 | Category (`/discover/c/:slug`) | Built. A category's paths, or an empty state. |
 | Path overview (`/p/:pathId`, the Learning tab) | Built. Shows progress, a Continue button and the stage-by-stage curriculum. |
+| Library (`/library`) | Built. Highlights, notes, bookmarks and reading history, with search and filters. |
 | Reader (`/read/:pathId/:lessonKey`) | Built. Has reading settings, type pairings and themes. |
 
 All screens use sample data: two paths (World War II, History of AI) and one written lesson. Progress and settings are saved on the device until accounts exist.

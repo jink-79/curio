@@ -9,6 +9,10 @@ export interface LessonProgress {
   manuallyIncomplete: boolean;
   maxScrollPct: number;
   activeSeconds: number;
+  /** Epoch ms. Optional: progress saved before these existed has none. */
+  lastReadAt?: number;
+  bookmarkedAt?: number;
+  completedAt?: number;
 }
 
 const EMPTY: LessonProgress = { bookmarked: false, completed: false, manuallyIncomplete: false, maxScrollPct: 0, activeSeconds: 0 };
@@ -21,7 +25,8 @@ function isProgress(v: unknown): v is LessonProgress {
     typeof p.completed === "boolean" &&
     typeof p.manuallyIncomplete === "boolean" &&
     typeof p.maxScrollPct === "number" &&
-    typeof p.activeSeconds === "number"
+    typeof p.activeSeconds === "number" &&
+    ["lastReadAt", "bookmarkedAt", "completedAt"].every((k) => p[k] === undefined || typeof p[k] === "number")
   );
 }
 
@@ -45,10 +50,13 @@ export function useLessonProgress(lessonKey: string, estimatedMinutes: number) {
   const save = useCallback(
     (patch: Partial<LessonProgress>) => {
       setProgress((prev) => {
-        const next = { ...prev, ...patch };
+        const now = Date.now();
+        const next: LessonProgress = { ...prev, ...patch, lastReadAt: now };
         if (!next.completed && !next.manuallyIncomplete && shouldAutoComplete(next.maxScrollPct, next.activeSeconds, estimatedMinutes)) {
           next.completed = true;
         }
+        if (next.completed && !prev.completed) next.completedAt = now;
+        if (next.bookmarked && !prev.bookmarked) next.bookmarkedAt = now;
         latest.current = next;
         writeJson(key, next);
         return next;

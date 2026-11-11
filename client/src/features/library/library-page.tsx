@@ -1,6 +1,7 @@
 import { Search, X } from "lucide-react";
 import { useRef } from "react";
 import { useSearchParams } from "react-router-dom";
+import { MenuButton } from "@/app/menu-button";
 import { listPaths } from "@/features/discover/lib/catalog";
 import { SAMPLE_LESSONS } from "@/features/reading/data/sample";
 import { useHighlights } from "@/features/reading/hooks/use-highlights";
@@ -41,7 +42,10 @@ export function LibraryPage() {
   return (
     <main className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
       <div className="mx-auto max-w-xl px-[18px] pt-[calc(env(safe-area-inset-top)+18px)] pb-8 font-reading">
-        <h1 className="font-serif text-[34px] leading-tight font-medium tracking-[-0.01em]">Library</h1>
+        <div className="flex items-start justify-between gap-2">
+          <h1 className="font-serif text-[34px] leading-tight font-medium tracking-[-0.01em]">Library</h1>
+          <MenuButton className="-mr-2.5" />
+        </div>
         <p className="mt-1 text-[15px] text-r-muted">
           {counts.highlights} {counts.highlights === 1 ? "highlight" : "highlights"} · {counts.bookmarks}{" "}
           {counts.bookmarks === 1 ? "bookmark" : "bookmarks"} · {counts.read} {counts.read === 1 ? "lesson" : "lessons"} read

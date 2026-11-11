@@ -2,6 +2,7 @@ import { ArrowRight, Check, ChevronDown, ChevronLeft, Share } from "lucide-react
 import { useEffect, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { rememberPath } from "@/app/last-path";
+import { MenuButton } from "@/app/menu-button";
 import { getCategory, pathStats } from "@/features/discover/lib/catalog";
 import { SAMPLE_PATHS } from "@/features/reading/data/sample";
 import type { PathOutline } from "@/features/reading/types";
@@ -77,9 +78,12 @@ function PathOverview({ path }: { path: PathOutline }) {
             <span className="font-display text-[15px] font-semibold tracking-[0.08em]">CURIO</span>
           </div>
         )}
-        <button type="button" onClick={share} aria-label="Share path" className="-mr-2.5 grid size-11 place-items-center rounded-xl text-r-text">
-          <Share className="size-5" strokeWidth={1.8} />
-        </button>
+        <div className="-mr-2.5 flex">
+          <button type="button" onClick={share} aria-label="Share path" className="grid size-11 place-items-center rounded-xl text-r-text">
+            <Share className="size-5" strokeWidth={1.8} />
+          </button>
+          <MenuButton />
+        </div>
       </header>
       <p role="status" aria-live="polite" className="sr-only">
         {shareNote}

@@ -1,5 +1,6 @@
 import { ChevronLeft } from "lucide-react";
 import { Link, Navigate, useParams } from "react-router-dom";
+import { MenuButton } from "@/app/menu-button";
 import { CategoryIcon } from "./components/category-icon";
 import { PathCard } from "./components/path-card";
 import { getCategory, pathsInCategory } from "./lib/catalog";
@@ -16,7 +17,8 @@ export function CategoryPage() {
         <Link to="/discover" aria-label="Back to Discover" className="grid size-11 place-items-center rounded-xl text-r-text">
           <ChevronLeft className="size-[22px]" strokeWidth={1.8} />
         </Link>
-        <span className="text-[13px] font-medium text-r-muted">Discover</span>
+        <span className="flex-1 text-[13px] font-medium text-r-muted">Discover</span>
+        <MenuButton />
       </header>
       <main className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         <div className="mx-auto max-w-xl px-[18px] pt-2 pb-8 font-reading">

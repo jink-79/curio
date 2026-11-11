@@ -1,4 +1,4 @@
-import { ChevronRight, Download, Palette, Smartphone, X } from "lucide-react";
+import { ChevronRight, Download, Palette, SlidersHorizontal, Smartphone, X } from "lucide-react";
 import { Dialog } from "radix-ui";
 import { type ReactNode, type RefObject, useState } from "react";
 import { cn } from "@/lib/cn";
@@ -8,6 +8,7 @@ interface AppMenuDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAppearance: () => void;
+  onPreferences: () => void;
   /** Element to refocus when the menu closes (the ☰ button that opened it). */
   returnFocusTo: RefObject<HTMLElement | null>;
 }
@@ -33,7 +34,7 @@ function Row({ icon, title, detail, onClick, trailing }: { icon: ReactNode; titl
 }
 
 /** Right-hand app menu: a few app-wide actions, nothing that leads to an unbuilt screen. */
-export function AppMenuDrawer({ open, onOpenChange, onAppearance, returnFocusTo }: AppMenuDrawerProps) {
+export function AppMenuDrawer({ open, onOpenChange, onAppearance, onPreferences, returnFocusTo }: AppMenuDrawerProps) {
   const [showInstall, setShowInstall] = useState(false);
   const [exportNote, setExportNote] = useState("");
   const installed = isInstalledApp();
@@ -79,6 +80,13 @@ export function AppMenuDrawer({ open, onOpenChange, onAppearance, returnFocusTo 
           <p className="mt-1 px-5 font-serif text-[15px] text-r-muted">Explore. Learn. Remember.</p>
 
           <nav aria-label="App menu" className="mt-6 flex flex-col gap-1 px-2">
+            <Row
+              icon={<SlidersHorizontal className="size-5" strokeWidth={1.8} />}
+              title="Preferences"
+              detail="Article length, topics, reading"
+              onClick={onPreferences}
+              trailing={<ChevronRight aria-hidden className="size-[18px] text-r-muted" strokeWidth={2} />}
+            />
             <Row
               icon={<Palette className="size-5" strokeWidth={1.8} />}
               title="Appearance"

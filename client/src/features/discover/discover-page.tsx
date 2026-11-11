@@ -3,6 +3,8 @@ import { useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { lastPathId } from "@/app/last-path";
 import { MenuButton } from "@/app/menu-button";
+import { usePreferences } from "@/features/preferences/hooks/use-preferences";
+import { interestsFirst } from "@/features/preferences/lib/preferences";
 import { usePathProgress } from "@/features/paths/hooks/use-path-progress";
 import { SAMPLE_PATHS } from "@/features/reading/data/sample";
 import type { Category, PathOutline } from "@/features/reading/types";
@@ -17,8 +19,9 @@ export function DiscoverPage() {
   const [params, setParams] = useSearchParams();
   const query = params.get("q") ?? "";
   const inputRef = useRef<HTMLInputElement>(null);
-  const categories = listCategories();
-  const paths = listPaths();
+  const prefs = usePreferences();
+  const categories = interestsFirst(listCategories(), (c) => c.slug, prefs.interests);
+  const paths = interestsFirst(listPaths(), (p) => p.categorySlug, prefs.interests);
   const categoryOf = (p: PathOutline) => categories.find((c) => c.slug === p.categorySlug);
 
   const setQuery = (q: string) => setParams(q ? { q } : {}, { replace: true });

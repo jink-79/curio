@@ -1,10 +1,10 @@
-import { ArrowRight } from "lucide-react";
 import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/cn";
 import { usePathProgress } from "@/features/paths/hooks/use-path-progress";
 import { BlockRenderer } from "./components/blocks/block-renderer";
 import { ContentsSheet } from "./components/contents-sheet";
+import { LessonEnd } from "./components/lesson-end";
 import { LessonHeader } from "./components/lesson-header";
 import { NotesSheet } from "./components/notes-sheet";
 import { ReaderBottomBar } from "./components/reader-bottom-bar";
@@ -112,9 +112,11 @@ function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
   };
 
   const [settings, setSettings] = useReaderSettings();
-  const { progress, toggleBookmark, toggleComplete, reportScroll } = useLessonProgress(lesson.lessonKey, lesson.estimatedMinutes);
+  const { progress, toggleBookmark, toggleComplete, reportScroll, savePosition } = useLessonProgress(lesson.lessonKey, lesson.estimatedMinutes);
   const [scrollPct, setScrollPct] = useState(0);
   const [sheet, setSheet] = useState<Sheet>(null);
+  const mainRef = useRef<HTMLElement>(null);
+
   // Deep link from the Library: ?block=<blockId>&hl=<highlightId> scrolls to the passage and opens its note.
   const [params] = useSearchParams();
   const targetBlock = params.get("block");
@@ -126,7 +128,34 @@ function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
     const t = window.setTimeout(() => setFlashBlock(null), 1600);
     return () => window.clearTimeout(t);
   }, [targetBlock]);
+
+  // Resume where you left off (unless a deep link says where to go, or the lesson is finished).
+  const [initialProgress] = useState(progress);
+  useEffect(() => {
+    const ratio = initialProgress.position ?? 0;
+    if (targetBlock || initialProgress.completed || ratio < 0.03 || ratio > 0.97) return;
+    const frame = requestAnimationFrame(() => {
+      const el = mainRef.current;
+      if (!el) return;
+      el.scrollTop = ratio * (el.scrollHeight - el.clientHeight);
+      flash("Picked up where you left off");
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [initialProgress, targetBlock]);
+
+  // Bars slide away while reading down and return on scroll up or at the ends.
+  const [barsHidden, setBarsHidden] = useState(false);
+  const lastTop = useRef(0);
+  const barsForced = sheet !== null || pending !== null || editingId !== null || toast !== "";
+  const hideBars = barsHidden && !barsForced;
+
   const pathProgress = usePathProgress(path);
+  const lessons = useMemo(() => path.stages.flatMap((s) => s.lessons), [path]);
+  const index = lessons.findIndex((l) => l.lessonKey === lesson.lessonKey);
+  const nextOutline = index >= 0 ? lessons[index + 1] : undefined;
+  const next = nextOutline ? { ...nextOutline, readable: nextOutline.lessonKey in SAMPLE_LESSONS } : null;
+  const prerequisiteUnread = lesson.buildsOn ? pathProgress.statuses[lesson.buildsOn.lessonKey] !== "done" : false;
+  const sources = lesson.blocks.flatMap((b) => (b.type === "sources" ? b.items : []));
 
   const textStyle: CSSProperties = {
     fontSize: FONT_SIZES[settings.fontStep],
@@ -134,10 +163,6 @@ function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
     fontFamily: settings.typeface === "serif" ? "var(--font-read-serif)" : "var(--font-read-sans)",
   };
 
-  const sourceCount = useMemo(
-    () => lesson.blocks.reduce((n, b) => n + (b.type === "sources" ? b.items.length : b.type === "image" ? 1 : 0), 0),
-    [lesson],
-  );
   const orphaned = useMemo(
     () =>
       lesson.blocks.flatMap((b) =>
@@ -146,39 +171,43 @@ function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
     [lesson, highlights],
   );
 
+  const minutesLeft = Math.max(1, Math.ceil(lesson.estimatedMinutes * (1 - scrollPct / 100)));
+  const status = progress.completed ? "Finished" : scrollPct >= 98 ? "End of lesson" : `${minutesLeft} min left`;
+
   const sheetProps = (name: Exclude<Sheet, null>) => ({
     open: sheet === name,
     onOpenChange: (open: boolean) => setSheet(open ? name : null),
   });
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-r-bg text-r-text">
-      <ReaderTopBar
-        backTo={`/p/${lesson.pathId}`}
-        stageLabel={`Stage ${lesson.stage.number} · ${lesson.stage.title}`}
-        positionLabel={`Lesson ${lesson.position.index} of ${lesson.position.total}`}
-        progress={scrollPct}
-        bookmarked={progress.bookmarked}
-        onToggleBookmark={toggleBookmark}
-        onOpenSettings={() => setSheet("settings")}
-      />
-
+    <div className="fixed inset-0 overflow-hidden bg-r-bg text-r-text">
       <main
-        className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
+        ref={mainRef}
+        className="absolute inset-0 overflow-y-auto overscroll-contain pt-[calc(env(safe-area-inset-top)+54px)] pb-[calc(env(safe-area-inset-bottom)+64px)]"
         onScroll={(e) => {
           const el = e.currentTarget;
           const pct = scrollProgress(el.scrollTop, el.scrollHeight, el.clientHeight);
           setScrollPct(pct);
           reportScroll(pct);
+          const max = el.scrollHeight - el.clientHeight;
+          if (max > 0) savePosition(el.scrollTop / max);
+          const delta = el.scrollTop - lastTop.current;
+          lastTop.current = el.scrollTop;
+          if (el.scrollTop < 60 || pct >= 98) setBarsHidden(false);
+          else if (delta > 8) setBarsHidden(true);
+          else if (delta < -8) setBarsHidden(false);
         }}
       >
-        <article ref={articleRef} className="mx-auto max-w-[68ch] px-5.5 pt-5.5 pb-10 font-reading">
-          <LessonHeader lesson={lesson} sourceCount={sourceCount} />
+        <article ref={articleRef} className="mx-auto max-w-[66ch] px-6 pt-6 pb-6 font-reading">
+          <LessonHeader lesson={lesson} prerequisiteUnread={prerequisiteUnread} />
           {lesson.blocks.map((block) => (
             <div
               key={block.id}
               id={`block-${block.id}`}
-              className={cn("-mx-2 scroll-mt-3 rounded-xl px-2 transition-colors duration-700", flashBlock === block.id ? "bg-r-accent-bg" : "bg-transparent")}
+              className={cn(
+                "-mx-2 scroll-mt-[calc(env(safe-area-inset-top)+64px)] rounded-xl px-2 transition-colors duration-700",
+                flashBlock === block.id ? "bg-r-accent-bg" : "bg-transparent",
+              )}
             >
               <BlockRenderer
                 block={block}
@@ -190,30 +219,27 @@ function Reader({ lesson, path }: { lesson: LessonView; path: PathOutline }) {
               />
             </div>
           ))}
-
-          {lesson.next && (
-            <Link
-              to={`/p/${lesson.pathId}`}
-              className="mt-5.5 flex items-center justify-between rounded-[14px] border border-r-border px-4 py-3.5 text-r-text no-underline"
-            >
-              <span>
-                <span className="block text-[11px] font-semibold tracking-[0.14em] text-r-muted uppercase">
-                  Up next · {lesson.next.minutes} min
-                </span>
-                <span className="mt-0.5 block text-[15px] font-medium">{lesson.next.title}</span>
-              </span>
-              <ArrowRight className="size-5" strokeWidth={1.8} aria-hidden />
-            </Link>
-          )}
+          <LessonEnd pathId={path.pathId} completed={progress.completed} onToggleComplete={toggleComplete} next={next} sources={sources} />
         </article>
       </main>
 
+      <ReaderTopBar
+        backTo={`/p/${lesson.pathId}`}
+        stageLabel={`Stage ${lesson.stage.number} · ${lesson.stage.title}`}
+        positionLabel={`Lesson ${lesson.position.index} of ${lesson.position.total}`}
+        progress={scrollPct}
+        bookmarked={progress.bookmarked}
+        hidden={hideBars}
+        onToggleBookmark={toggleBookmark}
+        onOpenSettings={() => setSheet("settings")}
+      />
+
       <ReaderBottomBar
-        completed={progress.completed}
+        status={status}
         noteCount={highlights.length}
+        hidden={hideBars}
         onOpenContents={() => setSheet("contents")}
         onOpenNotes={() => setSheet("notes")}
-        onToggleComplete={toggleComplete}
         overlay={
           pending ? (
             <SelectionBar

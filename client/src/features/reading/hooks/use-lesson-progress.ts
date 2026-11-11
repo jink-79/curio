@@ -14,6 +14,8 @@ export interface LessonProgress {
   lastReadAt?: number;
   bookmarkedAt?: number;
   completedAt?: number;
+  /** Where the reader left off, as a fraction of the scrollable height (0–1). */
+  position?: number;
 }
 
 const EMPTY: LessonProgress = { bookmarked: false, completed: false, manuallyIncomplete: false, maxScrollPct: 0, activeSeconds: 0 };
@@ -27,7 +29,7 @@ function isProgress(v: unknown): v is LessonProgress {
     typeof p.manuallyIncomplete === "boolean" &&
     typeof p.maxScrollPct === "number" &&
     typeof p.activeSeconds === "number" &&
-    ["lastReadAt", "bookmarkedAt", "completedAt"].every((k) => p[k] === undefined || typeof p[k] === "number")
+    ["lastReadAt", "bookmarkedAt", "completedAt", "position"].every((k) => p[k] === undefined || typeof p[k] === "number")
   );
 }
 
@@ -47,6 +49,7 @@ export function useLessonProgress(lessonKey: string, estimatedMinutes: number) {
   const key = progressKey(lessonKey);
   const [progress, setProgress] = useState<LessonProgress>(() => readJson(key, isProgress) ?? EMPTY);
   const latest = useRef(progress);
+  const lastPositionSave = useRef(0);
 
   const save = useCallback(
     (patch: Partial<LessonProgress>) => {
@@ -82,6 +85,13 @@ export function useLessonProgress(lessonKey: string, estimatedMinutes: number) {
     },
     reportScroll: (pct: number) => {
       if (pct > latest.current.maxScrollPct) save({ maxScrollPct: pct });
+    },
+    /** Remember the reading position, at most once a second. */
+    savePosition: (ratio: number) => {
+      const now = Date.now();
+      if (now - lastPositionSave.current < 1000) return;
+      lastPositionSave.current = now;
+      save({ position: Math.round(Math.min(1, Math.max(0, ratio)) * 1000) / 1000 });
     },
   };
 }

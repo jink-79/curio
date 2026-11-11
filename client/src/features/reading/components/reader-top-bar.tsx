@@ -1,5 +1,6 @@
 import { Bookmark, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/cn";
 
 interface ReaderTopBarProps {
   backTo: string;
@@ -7,15 +8,23 @@ interface ReaderTopBarProps {
   positionLabel: string;
   progress: number;
   bookmarked: boolean;
+  /** Slid up out of the way while reading; the 2px progress line stays visible. */
+  hidden: boolean;
   onToggleBookmark: () => void;
   onOpenSettings: () => void;
 }
 
 export function ReaderTopBar(props: ReaderTopBarProps) {
-  const { backTo, stageLabel, positionLabel, progress, bookmarked, onToggleBookmark, onOpenSettings } = props;
+  const { backTo, stageLabel, positionLabel, progress, bookmarked, hidden, onToggleBookmark, onOpenSettings } = props;
   return (
-    <header className="shrink-0 bg-r-bar pt-[env(safe-area-inset-top)]">
-      <div className="flex h-[52px] items-center gap-1 px-1.5">
+    <header
+      className={cn(
+        "absolute inset-x-0 top-0 z-10 bg-r-bar pt-[env(safe-area-inset-top)] transition-transform duration-200 ease-out",
+        // Keep the bottom 2px (the progress line) on screen when hidden.
+        hidden && "-translate-y-[calc(100%-2px)]",
+      )}
+    >
+      <div className={cn("flex h-[52px] items-center gap-1 px-1.5 transition-opacity duration-150", hidden && "opacity-0")} inert={hidden}>
         <Link to={backTo} aria-label="Back to path" className="grid size-11 place-items-center rounded-xl text-r-text">
           <ChevronLeft className="size-[22px]" strokeWidth={1.8} />
         </Link>
@@ -41,14 +50,7 @@ export function ReaderTopBar(props: ReaderTopBarProps) {
           Aa
         </button>
       </div>
-      <div
-        role="progressbar"
-        aria-label="Reading progress"
-        aria-valuenow={progress}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        className="h-0.5 bg-r-border"
-      >
+      <div role="progressbar" aria-label="Reading progress" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} className="h-0.5 bg-r-border">
         <div className="h-0.5 bg-r-primary transition-[width] duration-150 ease-out" style={{ width: `${progress}%` }} />
       </div>
     </header>

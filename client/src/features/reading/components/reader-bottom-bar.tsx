@@ -1,46 +1,43 @@
-import { Check, List, StickyNote } from "lucide-react";
+import { List, StickyNote } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 interface ReaderBottomBarProps {
-  completed: boolean;
+  /** e.g. "6 min left" or "Finished". */
+  status: string;
   noteCount: number;
+  hidden: boolean;
   onOpenContents: () => void;
   onOpenNotes: () => void;
-  onToggleComplete: () => void;
-  /** Floats just above the bar (the text-selection toolbar). */
+  /** Floats just above the bar (the text-selection toolbar, toasts). */
   overlay?: ReactNode;
 }
 
-const sideButton = "flex h-12 w-14 flex-col items-center justify-center gap-[3px] text-[10px] font-medium text-r-muted";
+const sideButton = "flex h-12 w-16 flex-col items-center justify-center gap-[3px] text-[10px] font-medium text-r-muted";
 
-export function ReaderBottomBar({ completed, noteCount, onOpenContents, onOpenNotes, onToggleComplete, overlay }: ReaderBottomBarProps) {
+export function ReaderBottomBar({ status, noteCount, hidden, onOpenContents, onOpenNotes, overlay }: ReaderBottomBarProps) {
   return (
     <nav
       aria-label="Lesson"
-      className="relative flex shrink-0 items-center gap-1.5 border-t border-r-border bg-r-bar px-2.5 pt-1.5 pb-[max(6px,calc(env(safe-area-inset-bottom)-14px))]"
+      className={cn(
+        "absolute inset-x-0 bottom-0 z-10 border-t border-r-border bg-r-bar px-2.5 pt-1 pb-[max(6px,calc(env(safe-area-inset-bottom)-14px))] transition-transform duration-200 ease-out",
+        hidden && "translate-y-full",
+      )}
     >
       {overlay && <div className="pointer-events-none absolute inset-x-0 bottom-full z-20 px-3 pb-2.5 [&>*]:pointer-events-auto">{overlay}</div>}
-      <button type="button" onClick={onOpenContents} className={sideButton}>
-        <List className="size-[21px]" strokeWidth={1.7} />
-        Contents
-      </button>
-      <button type="button" onClick={onOpenNotes} className={sideButton}>
-        <StickyNote className="size-[21px]" strokeWidth={1.7} />
-        Notes · {noteCount}
-      </button>
-      <button
-        type="button"
-        onClick={onToggleComplete}
-        aria-pressed={completed}
-        className={cn(
-          "flex h-[46px] flex-1 items-center justify-center gap-2 rounded-[14px] border text-[15px] font-semibold transition-colors",
-          completed ? "border-r-ok bg-r-ok-bg text-r-ok" : "border-r-primary bg-r-primary text-r-on-primary active:bg-r-primary-hover",
-        )}
-      >
-        <Check className="size-[18px]" strokeWidth={2.4} />
-        {completed ? "Completed" : "Mark complete"}
-      </button>
+      <div className="flex items-center justify-between" inert={hidden}>
+        <button type="button" onClick={onOpenContents} className={sideButton}>
+          <List className="size-[21px]" strokeWidth={1.7} />
+          Contents
+        </button>
+        <span className="text-xs text-r-muted tabular-nums" aria-live="off">
+          {status}
+        </span>
+        <button type="button" onClick={onOpenNotes} className={sideButton}>
+          <StickyNote className="size-[21px]" strokeWidth={1.7} />
+          Notes{noteCount > 0 ? ` · ${noteCount}` : ""}
+        </button>
+      </div>
     </nav>
   );
 }

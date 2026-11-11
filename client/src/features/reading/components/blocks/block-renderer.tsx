@@ -1,9 +1,7 @@
 import type { CSSProperties } from "react";
 import type { Block, Highlight } from "../../types";
 import { AuthoredBlock } from "./authored-block";
-import { QuizBlock } from "./quiz-block";
-import { ConceptsBlock, ImageBlock, PeopleBlock, TakeawaysBlock, TimelineBlock } from "./simple-blocks";
-import { SourcesBlock } from "./sources-block";
+import { ImageBlock, TimelineBlock } from "./simple-blocks";
 
 interface BlockRendererProps {
   block: Block;
@@ -31,17 +29,9 @@ export function BlockRenderer({ block, highlights, openHighlightId, onToggleHigh
       );
     case "image":
       return <ImageBlock alt={block.alt} caption={block.caption} credit={block.credit} {...(block.src ? { src: block.src } : {})} />;
-    case "concepts":
-      return <ConceptsBlock heading={block.heading} items={block.items} />;
-    case "people":
-      return <PeopleBlock heading={block.heading} items={block.items} />;
     case "timeline":
       return <TimelineBlock heading={block.heading} items={block.items} />;
-    case "takeaways":
-      return <TakeawaysBlock items={block.items} />;
-    case "quiz":
-      return <QuizBlock questions={block.questions} />;
     case "sources":
-      return <SourcesBlock heading={block.heading} items={block.items} />;
+      return null; // rendered once, as a footnote, by <LessonEnd>
   }
 }

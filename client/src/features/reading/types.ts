@@ -24,23 +24,16 @@ export interface SourceRef {
   licence: Licence;
 }
 
+/**
+ * Lesson content blocks. The reader is deliberately reading-only: no
+ * quizzes, takeaways or decorative chips (owner decision, ADR-026).
+ */
 export type Block =
   | { id: string; type: "authored"; heading?: string; markdown: string }
   | { id: string; type: "image"; alt: string; caption: string; credit: string; src?: string }
-  | { id: string; type: "concepts"; heading: string; items: string[] }
-  | { id: string; type: "people"; heading: string; items: { name: string; role: string }[] }
-  | { id: string; type: "timeline"; heading: string; items: { date: string; text: string; emphasis?: boolean }[] }
-  | { id: string; type: "takeaways"; items: string[] }
-  | { id: string; type: "quiz"; questions: QuizQuestion[] }
-  | { id: string; type: "sources"; heading: string; items: SourceRef[] };
-
-export interface QuizQuestion {
-  id: string;
-  prompt: string;
-  options: { id: string; text: string }[];
-  correctOptionId: string;
-  explanation: string;
-}
+  | { id: string; type: "timeline"; heading: string; items: { date: string; text: string }[] }
+  /** Attribution, required by source licences; rendered as a quiet footnote. */
+  | { id: string; type: "sources"; items: SourceRef[] };
 
 export interface LessonView {
   lessonKey: string;
@@ -49,13 +42,12 @@ export interface LessonView {
   category: string;
   title: string;
   subtitle: string;
-  difficulty: string;
   estimatedMinutes: number;
   stage: { number: number; title: string };
   position: { index: number; total: number };
-  buildsOn?: { title: string; completed: boolean };
+  /** A lesson this one assumes you have read; shown only while it isn't finished. */
+  buildsOn?: { lessonKey: string; title: string };
   blocks: Block[];
-  next?: { title: string; minutes: number };
 }
 
 export interface PathLesson {

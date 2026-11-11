@@ -2,6 +2,7 @@ import { ArrowRight, Search, X } from "lucide-react";
 import { useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { lastPathId } from "@/app/last-path";
+import { MenuButton } from "@/app/menu-button";
 import { usePathProgress } from "@/features/paths/hooks/use-path-progress";
 import { SAMPLE_PATHS } from "@/features/reading/data/sample";
 import type { Category, PathOutline } from "@/features/reading/types";
@@ -28,7 +29,10 @@ export function DiscoverPage() {
   return (
     <main className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
       <div className="mx-auto max-w-xl px-[18px] pt-[calc(env(safe-area-inset-top)+18px)] pb-8 font-reading">
-        <h1 className="font-serif text-[34px] leading-tight font-medium tracking-[-0.01em]">Discover</h1>
+        <div className="flex items-start justify-between gap-2">
+          <h1 className="font-serif text-[34px] leading-tight font-medium tracking-[-0.01em]">Discover</h1>
+          <MenuButton className="-mr-2.5" />
+        </div>
         <p className="mt-1 text-[15px] text-r-muted">Explore. Learn. Remember.</p>
 
         <form role="search" className="relative mt-4" onSubmit={(e) => { e.preventDefault(); inputRef.current?.blur(); }}>

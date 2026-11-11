@@ -61,26 +61,25 @@ export const SAMPLE_LESSON: LessonView = {
   category: "History",
   title: "The Treaty of Versailles",
   subtitle: "How the peace that ended the First World War set the stage for the second.",
-  difficulty: "Beginner",
   estimatedMinutes: 8,
   stage: { number: 1, title: "Origins" },
   position: { index: 2, total: 9 },
-  buildsOn: { title: "Lesson 1 · Background and origins", completed: true },
-  next: { title: "The Great Depression", minutes: 10 },
+  buildsOn: { lessonKey: "background", title: "Background and origins" },
   blocks: [
     {
       id: "intro",
       type: "authored",
-      heading: "Introduction",
       markdown:
         "The Treaty of Versailles was signed on 28 June 1919 in the Hall of Mirrors at the Palace of Versailles — five years to the day after the assassination of Archduke Franz Ferdinand. It formally ended the war between Germany and the Allied Powers.",
     },
     {
       id: "background",
       type: "authored",
-      heading: "Background",
-      markdown:
-        "The terms were negotiated at the Paris Peace Conference, which opened in January 1919. Germany was not invited to the negotiating table; its delegation was handed the finished terms and given a short deadline to accept them.",
+      heading: "How it was made",
+      markdown: [
+        "The terms were negotiated at the Paris Peace Conference, which opened in January 1919. The talks were dominated by the “Big Four”: Woodrow Wilson of the United States, Georges Clemenceau of France, David Lloyd George of Britain and Vittorio Orlando of Italy.",
+        "Germany was not invited to the negotiating table. Its delegation was handed the finished terms and given a short deadline to accept them.",
+      ].join("\n\n"),
     },
     {
       id: "img-signing",
@@ -100,65 +99,19 @@ export const SAMPLE_LESSON: LessonView = {
       ].join("\n\n"),
     },
     {
-      id: "concepts",
-      type: "concepts",
-      heading: "Key concepts",
-      items: ["Article 231", "Reparations", "Diktat", "League of Nations", "Rhineland"],
-    },
-    {
-      id: "people",
-      type: "people",
-      heading: "People",
-      items: [
-        { name: "Woodrow Wilson", role: "United States" },
-        { name: "Georges Clemenceau", role: "France" },
-        { name: "David Lloyd George", role: "United Kingdom" },
-        { name: "Vittorio Orlando", role: "Italy" },
-      ],
-    },
-    {
       id: "timeline",
       type: "timeline",
-      heading: "Timeline",
+      heading: "Key dates",
       items: [
-        { date: "18 January 1919", text: "Paris Peace Conference opens" },
-        { date: "28 June 1919", text: "Treaty signed in the Hall of Mirrors", emphasis: true },
-        { date: "10 January 1920", text: "Treaty enters into force; League of Nations founded" },
+        { date: "18 Jan 1919", text: "Paris Peace Conference opens" },
+        { date: "28 Jun 1919", text: "Treaty signed in the Hall of Mirrors" },
+        { date: "10 Jan 1920", text: "Treaty enters into force; League of Nations founded" },
         { date: "May 1921", text: "Reparations fixed at 132 billion gold marks" },
-      ],
-    },
-    {
-      id: "takeaways",
-      type: "takeaways",
-      items: [
-        "Signed 28 June 1919, it ended the war between Germany and the Allies.",
-        "Article 231 and reparations created a lasting economic and political grievance.",
-        "That grievance fed the nationalist movements of the 1920s and ’30s.",
-      ],
-    },
-    {
-      id: "check",
-      type: "quiz",
-      questions: [
-        {
-          id: "q1",
-          prompt: "What did Article 231 of the treaty establish?",
-          options: [
-            { id: "a", text: "The founding of the League of Nations" },
-            { id: "b", text: "Responsibility of Germany and its allies for the war’s loss and damage" },
-            { id: "c", text: "The demilitarisation of the Rhineland" },
-            { id: "d", text: "The maximum size of the German army" },
-          ],
-          correctOptionId: "b",
-          explanation:
-            "Article 231 — the “war guilt clause” — assigned responsibility to Germany and its allies and became the legal basis for reparations.",
-        },
       ],
     },
     {
       id: "sources",
       type: "sources",
-      heading: "Sources & further reading",
       items: [
         {
           provider: "Wikipedia",
@@ -180,7 +133,6 @@ export const SAMPLE_LESSON: LessonView = {
     },
   ],
 };
-
 
 /** Lessons with written content, by lessonKey. Others show "not written yet". */
 export const SAMPLE_LESSONS: Record<string, LessonView> = {

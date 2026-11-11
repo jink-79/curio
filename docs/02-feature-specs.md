@@ -105,6 +105,9 @@ See [05-content-engine](05-content-engine.md). Summary:
 
 ## F11. Quizzes
 
+> **Superseded for the reader (ADR-026, Nov 2026):** lessons show no knowledge checks or takeaways. Kept here only as history.
+
+
 - Question types: `mcq` (2–6 options, one correct), `true_false`, `fill_blank` (accepts several answers, case-insensitive, trimmed).
 - Each question has an explanation and optional source references.
 - Questions come from three origins: `authored` (editor), `wikidata` (deterministic templates, e.g. "In what year did X occur?", with distractors drawn from sibling entities), and `llm` (optional, Q1, must cite a source block).

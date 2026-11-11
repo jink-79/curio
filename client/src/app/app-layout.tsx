@@ -1,6 +1,6 @@
 import { BookOpen, Compass, Library } from "lucide-react";
 import { useRef, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { SettingsSheet } from "@/features/reading/components/settings-sheet";
 import { useReaderSettings } from "@/features/reading/reader-settings";
 import { cn } from "@/lib/cn";
@@ -16,6 +16,7 @@ import { lastPathId } from "./last-path";
  */
 export function AppLayout() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   // The ☰ button lives in each page, outside the dialog, so focus is returned to it by hand.
   const opener = useRef<HTMLElement | null>(null);
@@ -61,6 +62,11 @@ export function AppLayout() {
         open={menuOpen}
         onOpenChange={setMenuOpen}
         returnFocusTo={opener}
+        onPreferences={() => {
+          setMenuOpen(false);
+          opener.current = null; // focus moves to the new screen instead
+          navigate("/preferences");
+        }}
         onAppearance={() => {
           setMenuOpen(false);
           setAppearanceOpen(true);

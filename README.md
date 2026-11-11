@@ -14,6 +14,7 @@ We're building one screen at a time, phone-first.
 | Category (`/discover/c/:slug`) | Built. A category's paths, or an empty state. |
 | Path overview (`/p/:pathId`, the Learning tab) | Built. Shows progress, a Continue button and the stage-by-stage curriculum. |
 | Library (`/library`) | Built. Highlights, notes, bookmarks and reading history, with search and filters. |
+| Preferences (`/preferences`, from the ☰ menu) | Built. Article length (stored for the content engine), topics shown first in Discover, auto-complete on/off. |
 | Reader (`/read/:pathId/:lessonKey`) | Built. Has reading settings, type pairings and themes. |
 
 All screens use sample data: two paths (World War II, History of AI) and one written lesson. Progress and settings are saved on the device until accounts exist.

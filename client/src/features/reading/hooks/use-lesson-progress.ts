@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getPreferences } from "@/features/preferences/lib/preferences";
 import { readJson, writeJson } from "@/lib/storage";
 import { shouldAutoComplete } from "../lib/progress";
 
@@ -52,7 +53,7 @@ export function useLessonProgress(lessonKey: string, estimatedMinutes: number) {
       setProgress((prev) => {
         const now = Date.now();
         const next: LessonProgress = { ...prev, ...patch, lastReadAt: now };
-        if (!next.completed && !next.manuallyIncomplete && shouldAutoComplete(next.maxScrollPct, next.activeSeconds, estimatedMinutes)) {
+        if (!next.completed && !next.manuallyIncomplete && getPreferences().autoComplete && shouldAutoComplete(next.maxScrollPct, next.activeSeconds, estimatedMinutes)) {
           next.completed = true;
         }
         if (next.completed && !prev.completed) next.completedAt = now;
